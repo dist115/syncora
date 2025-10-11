@@ -1,0 +1,11 @@
+export { DocxFileIcon } from './docx';
+export { DocFileIcon } from './doc';
+export { ExcelFileIcon } from './excel';
+export { ImageFileIcon } from './image';
+export { MusicFileIcon } from './music';
+export { PdfFileIcon } from './pdf';
+export { TextFileIcon } from './txt';
+export { VideoFileIcon } from './video';
+export { ZipFileIcon } from './zip';
+export { JsonFileIcon } from './json';
+export { FileIcon } from './file';

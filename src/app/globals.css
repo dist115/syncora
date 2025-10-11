@@ -1,0 +1,598 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* --------------------------------- */
+  /* light theme */
+  /* --------------------------------- */
+  :root {
+    --background: 255 255 255; /* #ffffff */
+    --foreground: 27 30 39; /* #1b1e27 */
+    --muted: 234 237 241; /* #eaedf1 */
+    --muted-foreground: 130 136 155; /* #b1b9c9 */
+
+    /*
+    * primary colors
+    */
+    --primary-lighter: 234 237 241; /* #eaedf1 */
+    --primary-default: 27 30 39; /* #1b1e27 */
+    --primary-dark: 0 0 0; /* #000000 */
+    --primary-foreground: 255 255 255; /* #ffffff */
+
+    /*
+    * secondary colors
+    */
+    --secondary-lighter: 221 227 255; /* #dde3ff */
+    --secondary-default: 78 54 245; /* #4e36f5 */
+    --secondary-dark: 67 42 216; /* #432ad8 */
+    --secondary-foreground: 255 255 255; /* #ffffff */
+
+    /*
+    * danger colors
+    */
+    --red-lighter: 247 212 214; /* #f7d4d6 */
+    --red-default: 238 0 0; /* #e00 */
+    --red-dark: 197 0 0; /* #c50000 */
+
+    /*
+    * warning colors
+    */
+    --orange-lighter: 255 239 207; /* #ffefcf */
+    --orange-default: 245 166 35; /* #f5a623 */
+    --orange-dark: 171 87 10; /* #ab570a */
+
+    /*
+    * info colors
+    */
+    --blue-lighter: 211 229 255; /* #d3e5ff */
+    --blue-default: 0 112 243; /* #0070f3 */
+    --blue-dark: 7 97 209; /* #0761d1 */
+
+    /*
+    * success colors
+    */
+    --green-lighter: 185 249 207; /* #b9f9cf */
+    --green-default: 17 168 73; /* #11a849 */
+    --green-dark: 17 132 60; /* #11843c */
+  }
+
+  /* --------------------------------- */
+  /* dark theme */
+  /* --------------------------------- */
+  [data-theme='dark'] {
+    --background: 17 19 24; /* #111318 */
+    --foreground: 234 237 241; /* #eaedf1 */
+    --muted: 59 64 79; /* #3b404f */
+    --muted-foreground: 93 98 116; /* #5d6274 */
+
+    /*
+    * primary colors
+    */
+    --primary-lighter: 27 30 39; /* #1b1e27 */
+    --primary-default: 234 237 241; /* #eaedf1 */
+    --primary-dark: 246 247 249; /* #f6f7f9 */
+    --primary-foreground: 21 23 30; /* #15171e */
+
+    /*
+    * secondary colors
+    */
+    --secondary-lighter: 31 22 90; /* #1f165a */
+    --secondary-dark: 193 203 255; /* #c1cbff */
+
+    /*
+    * danger colors
+    */
+    --red-lighter: 204 29 43; /* #500000 */
+    --red-dark: 252 242 243; /* #fcf2f3 */
+
+    /*
+    * warning colors
+    */
+    --orange-lighter: 68 29 4; /* #441d04 */
+    --orange-dark: 252 234 139; /* #fcea8b */
+
+    /*
+    * info colors
+    */
+    --blue-lighter: 13 51 94; /* #0d335e */
+    --blue-dark: 181 233 255; /* #b5e9ff */
+
+    /*
+    * success colors
+    */
+    --green-lighter: 3 48 22; /* #033016 */
+    --green-dark: 185 249 207; /* #b9f9cf */
+
+    /* here you can customize other colors for dark theme if design required */
+  }
+
+  /* base style */
+  * {
+    @apply antialiased;
+  }
+  html {
+    @apply h-full bg-background !pr-0 antialiased;
+  }
+  body {
+    @apply flex min-h-full flex-col overflow-x-hidden text-sm text-foreground;
+  }
+  input::-ms-clear,
+  input::-ms-reveal {
+    @apply hidden;
+  }
+  input[type='search']::-webkit-search-cancel-button {
+    @apply hidden;
+  }
+  input[type='number']::-webkit-inner-spin-button,
+  input[type='number']::-webkit-outer-spin-button {
+    @apply m-0 appearance-none;
+  }
+  input[type='checkbox']:checked {
+    @apply bg-none;
+  }
+  /* typography style for the Text component */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-bold;
+  }
+  h1 {
+    @apply text-4xl;
+  }
+  h2 {
+    @apply text-3xl;
+  }
+  h3 {
+    @apply text-2xl;
+  }
+  h4 {
+    @apply text-xl;
+  }
+  h5 {
+    @apply text-lg;
+  }
+  h6 {
+    @apply text-base;
+  }
+  q {
+    @apply text-lg;
+  }
+}
+
+@layer components {
+  .select2-dropdown {
+    @apply rounded-b-lg shadow-md;
+  }
+  .select2-search {
+    @apply rounded border border-gray-300;
+  }
+  .select2-results__group {
+    @apply text-lg font-bold text-gray-900;
+  }
+  /* ... */
+}
+
+@layer utilities {
+  /* animation delay required for the Loader component */
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  .animation-delay-500 {
+    animation-delay: 500ms;
+  }
+  .animation-delay-700 {
+    animation-delay: 700ms;
+  }
+  /* this utilitie class required for the PinCode component */
+  .password-dot {
+    -webkit-text-security: disc;
+    -moz-text-security: circle;
+    text-security: circle;
+  }
+}
+
+/* Checkbox component */
+.checkbox-input + span {
+  @apply h-[18px] w-[18px] shrink-0 cursor-pointer rounded border-2 border-steel-200 dark:border-steel-600;
+}
+.checkbox-input.round + span {
+  @apply h-[22px] w-[22px] rounded-full border-2 border-steel-200 dark:border-steel-600;
+}
+
+.checkbox-input:disabled + span {
+  @apply pointer-events-none cursor-not-allowed border-steel-100 bg-steel-100 ring-steel-200 dark:border-steel-600/30 dark:bg-steel-600/30 dark:ring-steel-600/30;
+}
+
+.checkbox-input:focus + span {
+  @apply border-steel-700 dark:border-steel-600/90;
+}
+.checkbox-input:checked:focus + span {
+  @apply ring-1 ring-steel-700 ring-offset-2 dark:ring-steel-600/90;
+}
+.checkbox-input:checked:disabled + span {
+  @apply pointer-events-none cursor-not-allowed border-steel-200 bg-steel-100 ring-steel-200;
+}
+.checkbox-input:checked + span,
+.checkbox-input + span.indeterminate {
+  @apply border-steel-700 bg-steel-700 ring-steel-700 dark:border-steel-600 dark:bg-steel-600/90 dark:ring-steel-600;
+}
+.checkbox-input:checked + span::before {
+  @apply absolute inset-auto ml-0.5 mt-[3px] flex h-[5px] w-2.5 border-2 border-r-0 border-t-0 border-steel-100 content-[''] dark:border-steel-100/60;
+  transform: rotate(-45deg);
+}
+
+.checkbox-input.round:checked + span::before {
+  @apply absolute inset-auto ml-[3px] mt-[5px] flex h-1.5 w-3 border-2 border-r-0 border-t-0 border-steel-100 content-[''] dark:border-steel-100/60;
+  transform: rotate(-45deg);
+}
+
+.checkbox-input + span.indeterminate::before {
+  @apply absolute inset-auto ml-0.5 mt-1.5 flex h-0.5 w-2.5 bg-steel-700 content-[''] dark:bg-steel-600/90;
+}
+
+/* Transparent Scrollbar */
+.scrollbar-transparent::-webkit-scrollbar {
+  @apply w-1.5;
+}
+
+.scrollbar-transparent::-webkit-scrollbar-thumb {
+  @apply rounded-md bg-steel-200 dark:bg-steel-600;
+}
+
+.scrollbar-transparent::-webkit-scrollbar-track {
+  @apply bg-transparent;
+}
+/* hidden Scrollbar */
+.scrollbar-hidden::-webkit-scrollbar {
+  @apply hidden;
+}
+
+.scrollbar-hidden::-webkit-scrollbar-thumb {
+  @apply hidden;
+}
+
+.scrollbar-hidden::-webkit-scrollbar-track {
+  @apply hidden;
+}
+
+.simplebar-track.simplebar-vertical .simplebar-scrollbar:before {
+  @apply bg-custom-black/30 dark:bg-[#CBD5E1]/70;
+}
+.simplebar-track.simplebar-horizontal .simplebar-scrollbar:before {
+  @apply bg-custom-black/30 dark:bg-[#CBD5E1]/70;
+}
+
+.simplebar-wrapper {
+  @apply focus-visible:!outline-none [&_.simplebar-mask]:!outline-none [&_.simplebar-offset]:!outline-none;
+}
+.simplebar-mask,
+.simplebar-offset {
+}
+
+/* gradient border component */
+
+.gradient-border-wrapper {
+  --width: 50;
+  --height: 40;
+  --blur: 10;
+  --alpha: 0;
+  --gradient: linear-gradient(to right, #8b18e8, #04a5cd);
+  --x: 0, --y: 0;
+}
+
+.gradient-border-inner::after,
+.gradient-border-inner::before {
+  position: absolute;
+  left: 130%;
+  top: 50%;
+  translate: 0 -50%;
+  font-size: 2rem;
+  color: hsl(0 0% 50%);
+  opacity: 0;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.gradient-border-inner::after {
+  content: 'Masked Pseudo';
+}
+.gradient-border-inner::before {
+  content: 'Element';
+}
+
+.gradient-border {
+  width: 100%;
+  height: 100%;
+  background: hsl(280 0% 0% / var(--bg-alpha, 0));
+  border-radius: calc(var(--radius) * 1px);
+  position: absolute;
+  border: 0;
+  translate: calc(var(--x) * 1%) calc(var(--y) * 1%);
+  transition: background 0.2s;
+}
+.gradient-border::after {
+  --bg-size: calc(100% + (2px * var(--border)));
+  content: '';
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background: var(--gradient) center center / var(--bg-size) var(--bg-size);
+  border-radius: calc(var(--radius) * 1px);
+  border: calc(var(--border) * 1px) solid transparent;
+  mask: linear-gradient(
+      hsl(0 0% 100% / var(--alpha)),
+      hsl(0 0% 100% / var(--alpha))
+    ),
+    linear-gradient(hsl(0 0% 100%), hsl(0 0% 100%));
+  mask-clip: padding-box, border-box;
+  mask-composite: intersect;
+  z-index: 1;
+}
+
+/* landing service section animated illustration styles */
+
+.service-animated-illustration .document-1 {
+  animation: document1 10s infinite linear;
+}
+
+@keyframes document1 {
+  0%,
+  100% {
+    transform: scale(1) translateX(-50%);
+  }
+  25%,
+  75% {
+    transform: scale(0.5) translateX(-50%);
+  }
+}
+
+.service-animated-illustration .document-2 {
+  animation: document2 10s infinite linear;
+}
+
+@keyframes document2 {
+  0% {
+    transform: scale(0.75);
+  }
+  12.5%,
+  62.5% {
+    transform: scale(0.5);
+  }
+  87.5% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(0.75);
+  }
+}
+
+.service-animated-illustration .document-3 {
+  animation: document3 10s infinite linear;
+}
+
+@keyframes document3 {
+  0%,
+  50%,
+  100% {
+    transform: scale(0.5) translateY(-50%);
+  }
+
+  75% {
+    transform: scale(1) translateY(-50%);
+  }
+}
+
+.service-animated-illustration .document-4 {
+  animation: document4 10s infinite linear;
+}
+
+@keyframes document4 {
+  0%,
+  37.5%,
+  87.5%,
+  100% {
+    transform: scale(0.5);
+  }
+
+  62.5% {
+    transform: scale(1);
+  }
+}
+
+.service-animated-illustration .document-5 {
+  animation: document5 10s infinite linear;
+}
+
+@keyframes document5 {
+  0%,
+  25%,
+  75%,
+  100% {
+    transform: scale(0.5) translateX(-50%);
+  }
+
+  50% {
+    transform: scale(1) translateX(-50%);
+  }
+}
+
+.service-animated-illustration .document-6 {
+  animation: document6 10s infinite linear;
+}
+
+@keyframes document6 {
+  0%,
+  12.5%,
+  50%,
+  62.5%,
+  100% {
+    transform: scale(0.5);
+  }
+
+  37.5% {
+    transform: scale(1);
+  }
+}
+
+.service-animated-illustration .document-7 {
+  animation: document7 10s infinite linear;
+}
+
+@keyframes document7 {
+  0%,
+  50%,
+  100% {
+    transform: scale(0.5) translateY(-50%);
+  }
+
+  25% {
+    transform: scale(1) translateY(-50%);
+  }
+}
+
+.service-animated-illustration .document-8 {
+  animation: document8 10s infinite linear;
+}
+
+@keyframes document8 {
+  0%,
+  100% {
+    transform: scale(0.75);
+  }
+  12.5% {
+    transform: scale(1);
+  }
+  37.5%,
+  87.5% {
+    transform: scale(0.5);
+  }
+
+  75% {
+    transform: scale(1);
+  }
+}
+
+/* landing service section animated illustration styles ended */
+
+/* landing pricing section styles */
+.landing-pricing-card-slider {
+  @apply !-mx-4 !px-4 !pt-2;
+}
+/* landing pricing section styles ended */
+
+/* google captcha styles */
+
+.grecaptcha-badge {
+  @apply !bottom-[30%] !z-20 lg:!bottom-[28%];
+}
+
+.react-pdf__Document #pdf-page-info {
+  @apply hidden;
+}
+
+#pdf-controls {
+  @apply flex justify-center gap-2 bg-white p-5 !shadow-none [&_>_a]:hidden [&_button]:!ml-0 [&_button]:!h-9 [&_button]:!w-9 [&_button]:!shadow-md [&_button_svg]:!h-4  [&_button_svg]:!w-4;
+}
+
+#pdf-controls #pdf-pagination {
+  @apply flex gap-3 font-geist [&_svg]:!h-3 [&_svg]:!w-3;
+}
+
+#pdf-controls #pdf-zoom-in,
+#pdf-controls #pdf-zoom-out {
+  @apply [&_svg]:!h-5 [&_svg]:!w-5;
+}
+
+#proxy-renderer {
+  /* overflow-y: hidden !important; */
+}
+
+#proxy-renderer #txt-renderer {
+  @apply overflow-x-hidden;
+}
+#proxy-renderer #txt-renderer::-webkit-scrollbar {
+  @apply w-2.5;
+}
+
+#proxy-renderer #txt-renderer::-webkit-scrollbar-thumb {
+  @apply w-2.5;
+}
+
+#proxy-renderer #txt-renderer::-webkit-scrollbar-track {
+  @apply w-2.5;
+}
+
+#txt-renderer::-webkit-scrollbar-thumb {
+  @apply rounded-md bg-custom-black/30 dark:bg-custom-black/70;
+}
+
+#txt-renderer::-webkit-scrollbar-track {
+  @apply rounded-md bg-custom-black/[0.05] dark:bg-custom-black/20;
+}
+
+/* pdf renderer scrollbar */
+#proxy-renderer #pdf-renderer::-webkit-scrollbar {
+  @apply w-2.5;
+}
+
+#proxy-renderer #pdf-renderer::-webkit-scrollbar-thumb {
+  @apply w-2.5;
+}
+
+#proxy-renderer #pdf-renderer::-webkit-scrollbar-track {
+  @apply w-2.5;
+}
+
+#pdf-renderer::-webkit-scrollbar-thumb {
+  @apply rounded-md bg-custom-black/30 dark:bg-custom-black/70;
+}
+
+#pdf-renderer::-webkit-scrollbar-track {
+  @apply rounded-md bg-custom-black/[0.05] dark:bg-custom-black/20;
+}
+
+/* horizontal scrollbar styles */
+#proxy-renderer #pdf-renderer::-webkit-scrollbar:horizontal {
+  @apply h-2.5;
+}
+
+#proxy-renderer #pdf-renderer::-webkit-scrollbar-thumb:horizontal {
+  @apply h-2.5;
+}
+
+#proxy-renderer #pdf-renderer::-webkit-scrollbar-track:horizontal {
+  @apply h-2.5;
+}
+
+#pdf-renderer::-webkit-scrollbar-thumb:horizontal {
+  @apply rounded-md bg-custom-black/30 dark:bg-custom-black/70;
+}
+
+#pdf-renderer::-webkit-scrollbar-track:horizontal {
+  @apply rounded-md bg-custom-black/[0.05] dark:bg-custom-black/20;
+}
+
+/* sonner customization */
+
+[data-sonner-toaster] {
+  @apply !flex !justify-center;
+}
+
+/* input auto complete color issues fixed */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: var(--text-color);
+  transition: background-color 5000s ease-in-out 0s;
+  box-shadow: unset;
+}
+
+.rizzui-select-options {
+  @apply dark:!bg-steel-700;
+}
