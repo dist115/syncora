@@ -19,7 +19,9 @@ import { SettingsService } from '../service';
 
 export const handleContact = async (input: ContactUsInput) => {
   try {
-    const data = applyValidation(ContactUsSchema, input);
+    // const data = applyValidation(ContactUsSchema, input);
+    // const from = `${data.name}<${data.email}>`;
+    const data = applyValidation(ContactUsSchema, input) as ContactUsInput;
     const from = `${data.name}<${data.email}>`;
     const contact = await ContactService.create(data);
     revalidateTag('get-all-contacts');

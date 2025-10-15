@@ -18,7 +18,7 @@ export async function getFolders(parentId: string, params: any) {
   const user = await getCurrentUser();
   if (!user) throw new Error(MESSAGES.USER_NOT_FOUND);
   const teamId = Boolean(user.currentTeamId) ? user.currentTeamId : null;
-  const options = { userId:user.id, teamId:teamId,allFiles:true,parentId:parentId };
+  const options = { userId: user.id, teamId: teamId, allFiles: true, parentId: parentId };
 
   const folder = await FoldersService.find(parentId);
 
@@ -72,9 +72,13 @@ export const updateFolder = async (
   input: UpdateFolderInput
 ) => {
   try {
-    const data = applyValidation(UpdateFolderSchema, input);
+    // const data = applyValidation(UpdateFolderSchema, input);
+    // const profile = await FoldersService.update(folderId, data);
 
+    const data = applyValidation(UpdateFolderSchema, input) as UpdateFolderInput;
     const profile = await FoldersService.update(folderId, data);
+
+
     revalidateTag('get-files');
     return profile;
 

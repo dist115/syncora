@@ -33,6 +33,7 @@ export function SidebarDocButton({
         <Link
           legacyBehavior
           // href="https://filekit-doc.vercel.app/"
+          href="https://test.com"
           passHref
           className="outline-none inline-flex justify-center w-full"
         >

@@ -34,7 +34,9 @@ export const me = async () => {
 
 export const updateProfile = async (input: UpdateProfileInput) => {
   try {
-    const data = applyValidation(UpdateProfileSchema, input);
+    // const data = applyValidation(UpdateProfileSchema, input);
+    const data = applyValidation<UpdateProfileInput>(UpdateProfileSchema, input);
+
     const user = await getCurrentUser();
     const profile = await UserService.update(user?.id as string, data);
     revalidateTag('profile');
@@ -46,7 +48,8 @@ export const updateProfile = async (input: UpdateProfileInput) => {
 
 export const updateUser = async (userId: string, input: UpdateUserInput) => {
   try {
-    const data = applyValidation(UpdateUserSchema, input);
+    // const data = applyValidation(UpdateUserSchema, input);
+     const data = applyValidation<UpdateProfileInput>(UpdateProfileSchema, input);
     const profile = await UserService.update(userId, data);
     revalidateTag('get-users');
     return profile;
