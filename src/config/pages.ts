@@ -9,6 +9,10 @@ export const PAGES = {
   },
   AUTH: {
     LOGIN: '/login',
+    SIGNUP: '/auth/signup',
+    VERIFY_EMAIL: '/auth/verify-email',
+    FORGOT_PASSWORD: '/auth/forgot-password',
+    RESET_PASSWORD: '/auth/reset-password',
   },
   DASHBOARD: {
     ROOT: '/dashboard',
@@ -43,7 +47,6 @@ export const PAGES = {
     },
   },
   DOC:{
-    // LINK:'https://filekit-doc.vercel.app/'
     LINK:'https://test.com/' // change this later
     
   }

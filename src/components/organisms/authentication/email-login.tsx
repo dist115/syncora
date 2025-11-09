@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { demoLogin, magicLogin } from '@/server/actions/auth.action';
+import { magicLogin } from '@/server/actions/auth.action';
+// import { demoLogin, magicLogin } from '@/server/actions/auth.action';
 import { Button, Input, Text } from 'rizzui';
 import { toast } from 'sonner';
 
@@ -11,7 +12,7 @@ import { GoogleIcon } from '@/components/atoms/icons/google';
 import { Box, Flex } from '@/components/atoms/layout';
 import { useSearchParams } from '@/components/atoms/next/navigation';
 
-const demoMail = 'demo@filekit.com';
+// const demoMail = 'diwanmagar925@gmail.com';
 
 export const EmailLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -30,10 +31,10 @@ export const EmailLogin = () => {
     }
     //NOTE THIS IS ONLY FOR DEMO PURPOSE
     
-    //const response = await magicLogin(email.value);
+    const response = await magicLogin(email.value);
 
     
-    const response = await demoLogin(email.value);
+    // const response = await demoLogin(email.value);
 
     setIsLoading(false);
     if (!response.ok) {
@@ -48,8 +49,8 @@ export const EmailLogin = () => {
     <form method="post" onSubmit={handleSubmit} className="space-y-2">
       <Box>
         <Input
-          readOnly={true}
-          value={demoMail}
+          // readOnly={true}
+          // value={demoMail}
           autoComplete="off"
           name="email"
           type="email"

@@ -12,7 +12,7 @@ export function LoginButton({
   return (
     <Link
       aria-label="Syncora Logo"
-      href={PAGES.AUTH.LOGIN}
+      href={PAGES.AUTH.SIGNUP}
       className={cn(
         'flex items-center text-base font-medium text-white duration-200 hover:text-white/80 gap-2',
         className

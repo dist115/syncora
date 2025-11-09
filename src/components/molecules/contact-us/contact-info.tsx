@@ -30,7 +30,7 @@ export function ContactInfo({ className }: { className?: string }) {
             href="mailto:Contact@gmail.com"
             className="inline-block text-[#475569] text-xs sm:text-sm md:text-base lg:text-lg"
           >
-            Contact@gmail.com
+            info@syncora.com
           </a>
         </Box>
       </Flex>
@@ -65,7 +65,7 @@ export function ContactInfo({ className }: { className?: string }) {
           as="span"
           className="text-right whitespace-nowrap text-[#475569] leading-[1.7] text-xs sm:text-sm md:text-base lg:text-lg"
         >
-          Vancouver, WA 98665 <br /> United States
+          Toronto, VP 4000 <br /> Canada
         </Text>
       </Flex>
     </Box>
