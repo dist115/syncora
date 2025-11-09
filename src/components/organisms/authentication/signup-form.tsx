@@ -48,10 +48,13 @@ export const SignupForm = () => {
         position: 'top-center',
       });
       
-      // Redirect after showing toast
-      setTimeout(() => {
-        router.push(`${PAGES.AUTH.LOGIN}?message=verify-email`);
-      }, 1500);
+      // Store email for next step
+    localStorage.setItem('lastLoginEmail', formData.email); // ADD THIS
+    
+    // Redirect to password login
+    setTimeout(() => {
+      router.push('/auth/login?message=signup-success'); // CHANGE THIS
+    }, 1000);
     } catch (error) {
       console.error('Signup error:', error);
       toast.error('An unexpected error occurred', {
@@ -133,7 +136,7 @@ export const SignupForm = () => {
         <Text className="text-sm text-gray-600 dark:text-gray-400">
           Already have an account?{' '}
           <Link
-            href={PAGES.AUTH.LOGIN}
+            href={PAGES.AUTH.PASSWORD_LOGIN}
             className="font-semibold text-custom-black dark:text-steel-100 hover:underline"
           >
             Log In

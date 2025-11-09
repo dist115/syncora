@@ -48,10 +48,10 @@ export default async function LoginView({ message }: { message?: string }) {
             {!hideLogin && (
               <Box className="mb-8">
                 <Text className="text-xl lg:text-3xl lg:leading-10 mx-auto font-bold text-center max-w-[18ch] text-custom-black dark:text-[#CBD5E1]">
-                  Welcome Back! Please Sign In To Continue here
+                  Welcome Back! Please Verify your Email.
                 </Text>
                 <Text className="text-custom-gray darkK:text-[#94A3B8] mt-3 text-sm lg:text-base text-center">
-                  By signing up, you will gain access to exclusive content.
+                  By Verifying Email, you will gain access to your Secure Cloud Storage Dashboard.
                 </Text>
 
               </Box>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { magicLogin } from '@/server/actions/auth.action';
 // import { demoLogin, magicLogin } from '@/server/actions/auth.action';
@@ -16,7 +16,24 @@ import { useSearchParams } from '@/components/atoms/next/navigation';
 
 export const EmailLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState(''); // CHANGE: Remove demoMail default
   const searchParams = useSearchParams();
+
+  // ADD THIS useEffect - Autofill email from localStorage
+  useEffect(() => {
+    const lastEmail = localStorage.getItem('lastLoginEmail');
+    if (lastEmail) {
+      setEmail(lastEmail);
+      // Show toast if coming from password login
+      if (searchParams?.get('verified') === 'true') {
+        toast.success('Password verified!', {
+          description: 'Click below to receive magic link',
+          duration: 3000,
+          position: 'top-center',
+        });
+      }
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
@@ -30,10 +47,10 @@ export const EmailLogin = () => {
       return;
     }
     //NOTE THIS IS ONLY FOR DEMO PURPOSE
-    
+
     const response = await magicLogin(email.value);
 
-    
+
     // const response = await demoLogin(email.value);
 
     setIsLoading(false);
@@ -50,7 +67,8 @@ export const EmailLogin = () => {
       <Box>
         <Input
           // readOnly={true}
-          // value={demoMail}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)} // ADD onChange
           autoComplete="off"
           name="email"
           type="email"
