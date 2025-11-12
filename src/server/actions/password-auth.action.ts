@@ -12,12 +12,11 @@ import {
 
 export const signupAction = async (data: any) => {
   const validation = signupSchema.safeParse(data);
-  console.log(data);
-  console.log(validation);
   if (!validation.success) {
     return {
       ok: false,
       error: validation.error.errors[0].message,
+      errorType: 'validation_error',
     };
   }
 
@@ -30,10 +29,14 @@ export const loginAction = async (data: any) => {
     return {
       ok: false,
       error: validation.error.errors[0].message,
+      errorType: 'validation_error',
+      message: validation.error.errors[0].message,
     };
   }
 
-  return PasswordAuthService.login(validation.data);
+  // Pass through all response fields from service
+  const response = await PasswordAuthService.login(validation.data);
+  return response;
 };
 
 export const verifyEmailAction = async (token: string) => {

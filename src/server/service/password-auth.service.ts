@@ -134,27 +134,38 @@ export const PasswordAuthService = {
 
     login: async (data: { email: string; password: string }) => {
         try {
+            // Step 1: Check if user exists
             const authUser = await db.query.authUsers.findFirst({
                 where: eq(authUsers.email, data.email),
             });
 
+            // User doesn't exist
             if (!authUser) {
-                return { ok: false, error: 'Invalid email or password' };
+                return {
+                    ok: false,
+                    error: "No account found",
+                    errorType: 'no_account',
+                    message: "No account found with this email. Please sign up first."
+                };
             }
 
-            if (!authUser.isVerified) {
-                return { ok: false, error: 'Please verify your email first', needsVerification: true };
-            }
-
+            // Step 2: Check password
             const isValidPassword = await passwordUtils.verify(
                 data.password,
                 authUser.passwordHash
             );
 
+            // Wrong password
             if (!isValidPassword) {
-                return { ok: false, error: 'Invalid email or password' };
+                return {
+                    ok: false,
+                    error: 'Incorrect password',
+                    errorType: 'wrong_password',
+                    message: 'The password you entered is incorrect.'
+                };
             }
 
+            // Step 3: Check if MFA enabled (optional)
             if (authUser.mfaEnabled) {
                 const mfaToken = generateId(40);
                 return {
@@ -162,37 +173,29 @@ export const PasswordAuthService = {
                     needsMfa: true,
                     mfaToken,
                     userId: authUser.userId,
-                    userEmail: authUser.email, // ADD THIS LINE
+                    userEmail: authUser.email,
                 };
             }
 
-            if (!authUser.userId) {
-                return { ok: false, error: 'Account setup incomplete' };
-            }
+            // Success! Just return ok
+            return {
+                ok: true,
+                userId: authUser.userId,
+                userEmail: authUser.email,
+                message: 'Login successful'
+            };
 
-            const user = await db.query.users.findFirst({
-                where: eq(users.id, authUser.userId),
-            });
-
-            if (!user) {
-                return { ok: false, error: 'User not found' };
-            }
-
-            const session = await lucia.createSession(user.id, {});
-            const sessionCookie = lucia.createSessionCookie(session.id);
-            cookies().set(
-                sessionCookie.name,
-                sessionCookie.value,
-                sessionCookie.attributes
-            );
-
-            return { ok: true, userId: user.id };
         } catch (error) {
             console.error('Login error:', error);
-            return { ok: false, error: 'Failed to login' };
+            return {
+                ok: false,
+                error: 'Login failed',
+                errorType: 'server_error',
+                message: 'An unexpected error occurred.'
+            };
         }
     },
-
+    
     verifyMfaAndLogin: async (data: {
         mfaToken: string;
         code: string;
