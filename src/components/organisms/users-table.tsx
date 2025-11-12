@@ -253,8 +253,8 @@ export const UsersTable = ({
             className="w-full sm:w-auto lg:w-52 xl:w-44"
             optionClassName="capitalize"
             options={userStatusOptions}
-            onChange={(value: string) => {
-              setQueryParams({ status: value, page: 1 });
+            onChange={(value) => {
+              setQueryParams({ status: String(value), page: 1 });
             }}
             getOptionValue={(option) => option?.value?.toLowerCase() as any}
             value={queryParams?.status ?? ''}

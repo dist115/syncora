@@ -36,7 +36,8 @@ export default function AuthenticationEmail(url: string) {
               </Heading>
               <Text className="text-sm text-steel-600">Hello there,</Text>
               <Text className="text-sm leading-loose text-steel-600">
-                Welcome to Syncora, To sign in, please click the button below.
+                We are excited to have you on board. Syncora keeps your files safe, private, and always within reach.
+                To complete your email verification process and access your secure cloud storage dashboard, please click the button below:
               </Text>
             </Section>
 

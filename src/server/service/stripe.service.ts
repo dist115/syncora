@@ -9,7 +9,8 @@ import { metadata } from '@/app/layout';
 
 export const stripe = new Stripe(env.STRIPE_SECRET_KEY, {
   typescript: true,
-  apiVersion: '2024-09-30.acacia',
+  // apiVersion: '2024-09-30.acacia',
+    apiVersion: '2025-02-24.acacia', // ✅ New version
 });
 
 /**

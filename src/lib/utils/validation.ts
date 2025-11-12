@@ -1,41 +1,10 @@
-import { Schema, ZodSchema } from 'zod';
-import { ErrorMessageOptions, generateErrorMessage } from 'zod-error';
-
-/**
- * 
- * Example of options:
+import * as Zod from "zod";
+import { ErrorMessageOptions, generateErrorMessage } from "zod-error";
 
 const options: ErrorMessageOptions = {
-    delimiter: {
-      error: ' ',
-    },
-    path: {
-      enabled: true,
-      type: 'objectNotation',
-      transform: ({ label, value }) => `<${label}: ${value}>`,
-    },
-    code: {
-      enabled: true,
-      transform: ({ label, value }) => `<${label}: ${value}>`,
-    },
-    message: {
-      enabled: true,
-      transform: ({ label, value }) => `<${label}: ${value}>`,
-    },
-    transform: ({ errorMessage }) => `👉 ${errorMessage} 👈`,
-  };
- */
-
-const options: ErrorMessageOptions = {
-  delimiter: {
-    error: ' ',
-  },
-  path: {
-    enabled: false,
-  },
-  code: {
-    enabled: false,
-  },
+  delimiter: { error: " " },
+  path: { enabled: false },
+  code: { enabled: false },
   message: {
     enabled: true,
     transform: ({ label, value }) => `${value}`,
@@ -43,15 +12,26 @@ const options: ErrorMessageOptions = {
   transform: ({ errorMessage }) => `🚨 ${errorMessage} 🚨`,
 };
 
-export const applyValidation = <T extends Zod.infer<Schema>>(
-  schema: ZodSchema,
-  input: T
-): T => {
+// export const applyValidation = <T>(
+//   schema: any,           // 👈 loosened constraint
+//   input: unknown
+// ): T => {                 // 👈 still returns the right type
+//   const result = schema.safeParse(input);
+//   if (!result.success) {
+//     const errorMessage = generateErrorMessage(result.error.issues, options);
+//     throw new Error(errorMessage);
+//   }
+
+//   return result.data as T;
+// };
+
+export function applyValidation<T>(
+  schema: Zod.ZodSchema<T>,
+  input: unknown
+): T {
   const result = schema.safeParse(input);
   if (!result.success) {
-    const errorMessage = generateErrorMessage(result.error.issues, options);
-    throw new Error(errorMessage);
+    throw new Error(result.error.errors[0].message);
   }
-
   return result.data;
-};
+}

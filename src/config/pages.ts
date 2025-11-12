@@ -8,7 +8,13 @@ export const PAGES = {
     PRICING: '/pricing',
   },
   AUTH: {
-    LOGIN: '/login',
+    LOGIN: '/login', // Magic link login (keep existing)
+    PASSWORD_LOGIN: '/auth/login', // NEW: Password login
+    SIGNUP: '/auth/signup',
+    VERIFY_EMAIL: '/auth/verify-email',
+    MFA_CHOICE: '/auth/mfa-choice', // NEW: MFA choice page
+    FORGOT_PASSWORD: '/auth/forgot-password',
+    RESET_PASSWORD: '/auth/reset-password',
   },
   DASHBOARD: {
     ROOT: '/dashboard',
@@ -42,7 +48,8 @@ export const PAGES = {
       BILLING: '/settings/team/billing',
     },
   },
-  DOC:{
-    // LINK:'https://filekit-doc.vercel.app/'
+  DOC: {
+    LINK: 'https://test.com/' // change this later
+
   }
 };

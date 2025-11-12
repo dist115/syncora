@@ -12,9 +12,11 @@ import {
 
 export const createComment = async (input: CommentInput) => {
   try {
-    const data = applyValidation<CommentInput>(CreateCommentsSchema, input);
-
+    // const data = applyValidation(CreateCommentsSchema, input);
+    // const comment = await CommentsService.create(data);
+    const data = applyValidation(CreateCommentsSchema, input) as CommentInput;
     const comment = await CommentsService.create(data);
+
     revalidateTag('get-files');
     return comment;
   } catch (error) {

@@ -1,6 +1,9 @@
-import { Schema, ZodError, ZodSchema } from 'zod';
+import { z, ZodError, ZodSchema } from "zod";
 
-export const Validate = (schema: ZodSchema, input: Zod.infer<Schema>) => {
+export const Validate = <T extends z.ZodTypeAny>(
+  schema: T,
+  input: z.infer<T>
+) => {
   const result = schema.safeParse(input);
   if (!result.success) {
     return {
@@ -8,5 +11,5 @@ export const Validate = (schema: ZodSchema, input: Zod.infer<Schema>) => {
       message: (result.error as ZodError).format(),
     };
   }
-  return { error: false, message: '' };
+  return { error: false, message: "" };
 };

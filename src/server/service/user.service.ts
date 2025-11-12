@@ -50,9 +50,11 @@ export const UserService = {
     };
   },
 
-  findByEmail: async (email: string): UserPromise => {
+  // ✅ Lowercase email before lookup
+  findByEmail: async (email: string): Promise<User | undefined> => {
+    const normalized = email.toLowerCase();
     return await db.query.users.findFirst({
-      where: (users, { eq }) => eq(users.email, email),
+      where: (users, { eq }) => eq(users.email, normalized),
     });
   },
 
@@ -88,9 +90,10 @@ export const UserService = {
     };
   },
 
-  updateCurrentTeam: async (id: string, teamId: string | null): UserPromise => {
+  // ✅ Await the team membership check
+  updateCurrentTeam: async (id: string, teamId: string | null): Promise<User | undefined> => {
     if (teamId !== null) {
-      const isTeamMember = TeamService.isMember(id, teamId);
+      const isTeamMember = await TeamService.isMember(id, teamId);
       if (!isTeamMember) {
         throw new Error(MESSAGES.USER_IS_NOT_A_MEMBER_OF_THIS_TEAM);
       }
@@ -104,20 +107,52 @@ export const UserService = {
     return updated;
   },
 
-  create: async (data: NewUser) => {
-    const [inserted] = await db.insert(usersModel).values(data).returning();
-    const userRole={
-      roleId:2,
-      userId:inserted.id
+
+  // create: async (data: NewUser) => {
+  //   const [inserted] = await db.insert(usersModel).values(data).returning();
+  //   const userRole = {
+  //     roleId: 2,
+  //     userId: inserted.id
+  //   }
+  //   const [updateRole] = await db.insert(userRoles).values(userRole).returning()
+
+  //   return inserted;
+  // },
+
+  // ✅ Make create atomic (transaction) + lowercase email
+create: async (data: NewUser) => {
+  const payload: NewUser = {
+    ...data,
+    email: data.email.toLowerCase(),
+  };
+
+  return await db.transaction(async (trx) => {
+    const [inserted] = await trx.insert(usersModel).values(payload).returning();
+
+    // default role = USER; try to resolve by name, fallback to id 2
+    let roleIdToInsert = 2;
+    try {
+      const role = await trx.query.roles.findFirst({
+        where: (roles, { eq }) => eq(roles.name, USER_ROLES.USER),
+      });
+      if (role?.id) roleIdToInsert = role.id;
+    } catch {
+      /* ignore and keep fallback */
     }
-    const [updateRole]=await db.insert(userRoles).values(userRole).returning()
+
+    await trx.insert(userRoles).values({
+      roleId: roleIdToInsert,
+      userId: inserted.id,
+    });
 
     return inserted;
-  },
+  });
+},
+
 
   delete: async (id: string): UserPromise => {
     await db.delete(teamMember).where(eq(teamMember.userId, id));
-    await db.delete(userRoles).where(eq(userRoles.userId,id));
+    await db.delete(userRoles).where(eq(userRoles.userId, id));
 
     const [deleted] = await db
       .delete(usersModel)

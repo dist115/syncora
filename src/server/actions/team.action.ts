@@ -30,7 +30,9 @@ import { me } from './user.action';
 
 export const addTeam = async (input: TeamInput) => {
   try {
-    const data = applyValidation(CreateTeamSchema, input);
+    // const data = applyValidation(CreateTeamSchema, input);
+    const data = applyValidation<TeamInput>(CreateTeamSchema, input);
+
     const user = await getCurrentUser();
     const team = await TeamService.createTeam(user.id, data.name);
     revalidateTag('get-my-teams');
@@ -43,7 +45,8 @@ export const addTeam = async (input: TeamInput) => {
 
 export const updateTeam = async (teamId: string, input: TeamSettingsInput) => {
   try {
-    const data = applyValidation(TeamSettingsSchema, input);
+    // const data = applyValidation(TeamSettingsSchema, input);
+    const data = applyValidation<TeamSettingsInput>(TeamSettingsSchema, input);
     const user = await getCurrentUser();
     const team = await TeamService.updateTeam(teamId, data, user?.id as string);
     revalidateTag('get-my-teams');
@@ -96,7 +99,9 @@ export const getTeamByID = async (id: string) => {
  * @returns
  */
 export const invite = async (input: InviteMemberInput) => {
-  const data = applyValidation(InviteMemberSchema, input);
+  // const data = applyValidation(InviteMemberSchema, input);
+  const data = applyValidation<InviteMemberInput>(InviteMemberSchema, input);
+
   const user = await me();
 
   if (!user?.currentTeamId) {
