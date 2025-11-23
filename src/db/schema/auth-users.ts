@@ -18,6 +18,11 @@ export const authUsers = pgTable('auth_user', {
   mfaSecret: varchar('mfa_secret', { length: 255 }),
   mfaBackupCodes: varchar('mfa_backup_codes', { length: 1000 }), // JSON array
   userId: varchar('user_id', { length: 255 }).unique(), // Link to main users table
+
+   // NEW: Encryption fields
+  encryptionType: varchar('encryption_type', { length: 50 }).default('AES-256-GCM'),
+  encryptionKey: varchar('encryption_key', { length: 500 }), // Encrypted user key
+
   createdAt: timestamp('created_at').defaultNow().notNull(),
   updatedAt: timestamp('updated_at').defaultNow().notNull(),
   deletedAt: timestamp('deleted_at'),

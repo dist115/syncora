@@ -1,17 +1,17 @@
 import { redirect } from 'next/navigation';
-import Image from 'next/image';
-import { PAGES } from '@/config/pages';
 import { validateRequest } from '@/lib/utils/auth';
-import { SignupForm } from '@/components/organisms/authentication/signup-form';
+import { PAGES } from '@/config/pages';
+import { EncryptionSetupForm } from '@/components/organisms/authentication/encryption-setup-form';
 import { Box, Flex } from '@/components/atoms/layout';
 import { Text, Title } from 'rizzui';
 import { Logo } from '@/components/molecules/logo';
 import { CONFIG, APP_NAME } from '@/config';
 import { getSetting } from '@/server/actions/settings.action';
-import { LoginIllustration } from '@/components/atoms/illustrations/login-illustration';
 
-export default async function SignupPage() {
+export default async function EncryptionSetupPage() {
   const session = await validateRequest();
+  
+  // If already logged in, redirect to dashboard
   if (session && session?.user) {
     redirect(PAGES.DASHBOARD.ROOT);
   }
@@ -26,13 +26,14 @@ export default async function SignupPage() {
   const darkModeLogoSmallUrl = darkModeLogoSmall?.value;
 
   return (
-    <Box className="grid w-screen min-h-screen md:grid-cols-2 bg-white dark:bg-steel-900 font-geist">
+    <Box className="grid w-screen min-h-screen bg-white dark:bg-steel-900 font-geist">
       <Flex
         className="p-6 sm:p-8 md:py-24 lg:p-12 w-full h-full"
         direction="col"
-        justify="start"
+        justify="center"
+        align="center"
       >
-        <Box className="md:w-full w-full h-full max-w-[450px] flex flex-col gap-16 justify-between">
+        <Box className="w-full max-w-[600px] flex flex-col gap-8">
           <Flex justify="center" className="mb-1.5 lg:mb-3">
             <Logo
               isSmall={false}
@@ -47,42 +48,22 @@ export default async function SignupPage() {
             />
           </Flex>
 
-          <Box className="relative">
-            <Box className="mb-8">
-              <Title className="text-xl lg:text-3xl lg:leading-10 mx-auto font-bold text-center text-custom-black dark:text-[#CBD5E1]">
-                Create Your Account
-              </Title>
-              <Text className="text-custom-gray dark:text-[#94A3B8] mt-3 text-sm lg:text-base text-center">
-                Join us and start managing your files securely 
-              </Text>
-            </Box>
-
-            <SignupForm />
+          <Box className="text-center mb-6">
+            <Title className="text-2xl lg:text-3xl font-bold text-custom-black dark:text-[#CBD5E1] mb-3">
+              Setup Encryption
+            </Title>
+            <Text className="text-gray-600 dark:text-gray-400">
+              Secure your files with end-to-end encryption
+            </Text>
           </Box>
 
-          <Text className="text-center 3xl:text-base text-custom-black dark:text-custom-border">
+          <EncryptionSetupForm />
+
+          <Text className="text-center text-sm text-custom-black dark:text-custom-border">
             @{new Date().getFullYear()}&nbsp;{APP_NAME}
           </Text>
         </Box>
       </Flex>
-      <Box className="relative overflow-hidden h-full hidden md:block">
-        <Flex
-          justify="center"
-          align="center"
-          className="absolute top-0 left-0 w-full h-full pointer-events-none bg-[#6831E1]"
-        >
-          <Image
-            src="/assets/login-bg.webp"
-            alt="signup image"
-            width={960}
-            height={1008}
-            quality={100}
-            className="w-full h-full top-0 left-0 absolute object-cover pointer-events-none"
-            loading="eager"
-          />
-          <LoginIllustration className="w-[65%] max-w-[500px] h-auto relative z-[10]" />
-        </Flex>
-      </Box>
     </Box>
   );
 }

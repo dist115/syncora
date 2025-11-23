@@ -16,7 +16,7 @@ import prettyBytes from 'pretty-bytes';
 import { ActionIcon, Button, Modal, Text } from 'rizzui';
 
 import { cn } from '@/lib/utils/cn';
-import { getR2FileLink } from '@/lib/utils/file';
+// import { getR2FileLink } from '@/lib/utils/file';
 import { Draggable } from '@/components/atoms/draggable';
 import {
   DynamicFileIcon,
@@ -27,6 +27,7 @@ import { Box, Flex } from '@/components/atoms/layout';
 import Image from '@/components/atoms/next/image';
 import { FolderAction } from '@/components/molecules/folder-action';
 import FileDetails from '@/components/organisms/file-details';
+import { getDecryptedFileLink } from '@/lib/utils/file';
 
 export const FileView = ({
   file,
@@ -51,7 +52,9 @@ export const FileView = ({
 
   const [modalState, setModalState] = useState(false);
   const [detailsState, setDetailsState] = useState(true);
-  const imageUrl = getR2FileLink(file.fileName);
+  // const imageUrl = getR2FileLink(file.fileName);
+  const imageUrl = getDecryptedFileLink(file.id);
+
 
   const parentFolder =
     folders.find((item) => item.id === file.parentId) ?? null;

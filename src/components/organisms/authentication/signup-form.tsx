@@ -26,7 +26,7 @@ export const SignupForm = () => {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+ const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
@@ -42,19 +42,22 @@ export const SignupForm = () => {
         return;
       }
 
-      toast.success('Account created successfully!', {
-        description: 'Please check your email to verify your account.',
-        duration: 5000,
+      // ✅ Store authUserId for encryption setup
+      if (response.authUserId) {
+        sessionStorage.setItem('authUserId', response.authUserId);
+        sessionStorage.setItem('userEmail', formData.email);
+      }
+
+      toast.success('Account created!', {
+        description: 'Now let\'s secure your files with encryption',
+        duration: 3000,
         position: 'top-center',
       });
       
-      // Store email for next step
-    localStorage.setItem('lastLoginEmail', formData.email); // ADD THIS
-    
-    // Redirect to password login
-    setTimeout(() => {
-      router.push('/auth/login?message=signup-success'); // CHANGE THIS
-    }, 1000);
+      // ✅ Redirect to encryption setup
+      setTimeout(() => {
+        router.push('/auth/encryption-setup');
+      }, 1500);
     } catch (error) {
       console.error('Signup error:', error);
       toast.error('An unexpected error occurred', {

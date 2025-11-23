@@ -29,7 +29,7 @@ import { MESSAGES } from '@/config/messages';
 import { useDrawerState } from '@/lib/store/drawer.store';
 import { copyToClipboard } from '@/lib/utils';
 import { cn } from '@/lib/utils/cn';
-import { getR2FileLink } from '@/lib/utils/file';
+// import { getR2FileLink } from '@/lib/utils/file';
 import { fileDownloader } from '@/lib/utils/file-downloader';
 import { useClientWidth } from '@/hooks/useClientWidth';
 import { useIsClient } from '@/hooks/useIsClient';
@@ -42,6 +42,7 @@ import { Box, Flex } from '@/components/atoms/layout';
 import Image from '@/components/atoms/next/image';
 import DocPreview from '@/components/molecules/doc-preview/doc-preview';
 import FileDetails from '@/components/organisms/file-details';
+import { getDecryptedFileLink } from '@/lib/utils/file';
 
 export function FilePreview({
   file,
@@ -59,7 +60,8 @@ export function FilePreview({
   const router = useRouter();
   const [detailsState, setDetailsState] = useState(true);
   const [modalState, setModalState] = useState(false);
-  const fileUrl = getR2FileLink(file.fileName);
+  // const fileUrl = getR2FileLink(file.fileName);
+  const fileUrl = getDecryptedFileLink(file.id);
   const iconType = file?.type as FileIconType | null;
   const [sharableLink, setSharableLink] = useState(
     file.hash ? `${env.NEXT_PUBLIC_BASE_URL}/share/${file.hash}` : ``
@@ -118,7 +120,8 @@ export function FilePreview({
               as="span"
               variant="text"
               className="w-auto hover:bg-steel-100 px-2 sm:px-3 text-steel-900 dark:text-steel-200 dark:hover:bg-steel-300/10 cursor-pointer"
-              onClick={() => fileDownloader(fileUrl, file.name)}
+              // onClick={() => fileDownloader(fileUrl, file.name)}
+              onClick={() => fileDownloader(file.id, `${file.name}.${file.extension}`)}
             >
               <RiDownloadLine className="sm:mr-2" size={18} />
               <span className="hidden sm:inline-block">Download</span>
@@ -197,7 +200,8 @@ export function FilePreview({
               </Text>
               <Button
                 className="flex items-center"
-                onClick={() => fileDownloader(fileUrl, file.name)}
+                // onClick={() => fileDownloader(fileUrl, file.name)}
+                onClick={() => fileDownloader(file.id, `${file.name}.${file.extension}`)}
               >
                 <RiDownloadLine className="mr-2" size={18} />
                 Download

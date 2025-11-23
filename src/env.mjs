@@ -34,6 +34,7 @@ export const env = createEnv({
     MAILCHIMP_API_KEY:z.string().min(1),
     MAILCHIMP_AUDIENCE_ID:z.string().min(1),
     MAILCHIMP_API_SERVER:z.string().min(1),
+    MASTER_ENCRYPTION_KEY: z.string().length(64), // 64 hex chars = 32 bytes
 
   },
   /*
@@ -90,6 +91,7 @@ export const env = createEnv({
     MAILCHIMP_API_KEY:process.env.MAILCHIMP_API_KEY,
     MAILCHIMP_API_SERVER:process.env.MAILCHIMP_API_SERVER,
     MAILCHIMP_AUDIENCE_ID:process.env.MAILCHIMP_AUDIENCE_ID,
+    MASTER_ENCRYPTION_KEY: process.env.MASTER_ENCRYPTION_KEY,
     
   },
 });

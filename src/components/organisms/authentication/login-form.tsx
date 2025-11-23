@@ -38,84 +38,98 @@ export const LoginForm = () => {
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setErrors({ email: '', password: '' });
-        setIsLoading(true);
+   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrors({ email: '', password: '' });
+    setIsLoading(true);
 
-        try {
-            const response = await loginAction(formData);
+    try {
+        const response = await loginAction(formData);
 
-            if (!response.ok) {
-                setIsLoading(false);
+        if (!response.ok) {
+            setIsLoading(false);
 
-                // No account found
-                if (response.errorType === 'no_account') {
-                    setErrors({ email: 'No account found with this email', password: '' });
-                    toast.error("Account not found", {
-                        description: "Please create an account first",
-                        duration: 5000,
-                        position: 'top-center',
-                    });
-                    return;
-                }
+            // No account found
+            if (response.errorType === 'no_account') {
+                setErrors({ email: 'No account found with this email', password: '' });
+                toast.error("Account not found", {
+                    description: "Please create an account first",
+                    duration: 5000,
+                    position: 'top-center',
+                });
+                return;
+            }
 
-                // Wrong password
-                if (response.errorType === 'wrong_password') {
-                    setErrors({ email: '', password: 'Incorrect password' });
-                    toast.error("Incorrect password", {
-                        description: "Please try again",
-                        duration: 4000,
-                        position: 'top-center',
-                    });
-                    return;
-                }
-
-                // Generic error
-                toast.error(response.error || 'Login failed', {
+            // Wrong password
+            if (response.errorType === 'wrong_password') {
+                setErrors({ email: '', password: 'Incorrect password' });
+                toast.error("Incorrect password", {
+                    description: "Please try again",
                     duration: 4000,
                     position: 'top-center',
                 });
                 return;
             }
 
-            // Success - MFA enabled
-            if (response.needsMfa) {
-                toast.success('Password verified!', {
-                    description: 'Choose your verification method',
-                    duration: 2000,
-                    position: 'top-center',
-                });
-                sessionStorage.setItem('mfaToken', response.mfaToken);
-                sessionStorage.setItem('userId', response.userId);
-                sessionStorage.setItem('userEmail', response.userEmail);
-                router.push('/auth/mfa-choice');
-                return;
-            }
-
-            // Success - No MFA, redirect to magic link page
-            toast.success('Password verified!', {
-                description: 'Complete verification with magic link',
-                duration: 2000,
-                position: 'top-center',
-            });
-
-            localStorage.setItem('lastLoginEmail', formData.email);
-            
-            setTimeout(() => {
-                router.push('/login?verified=true');
-            }, 1000);
-
-        } catch (error) {
-            console.error('Login error:', error);
-            setIsLoading(false);
-            toast.error('Connection error', {
-                description: 'Please check your internet connection',
+            // Generic error
+            toast.error(response.error || 'Login failed', {
                 duration: 4000,
                 position: 'top-center',
             });
+            return;
         }
-    };
+
+        // ✅ NEW: Check if encryption setup is needed
+        if (response.needsEncryptionSetup) {
+            toast.info('Encryption Setup Required', {
+                description: 'Please set up encryption to secure your files',
+                duration: 3000,
+                position: 'top-center',
+            });
+            sessionStorage.setItem('authUserId', response.authUserId);
+            sessionStorage.setItem('userEmail', response.userEmail);
+            sessionStorage.setItem('fromLogin', 'true');
+            router.push('/auth/encryption-setup');
+            return;
+        }
+
+        // Success - MFA enabled
+        if (response.needsMfa) {
+            toast.success('Password verified!', {
+                description: 'Choose your verification method',
+                duration: 2000,
+                position: 'top-center',
+            });
+            sessionStorage.setItem('mfaToken', response.mfaToken);
+            sessionStorage.setItem('userId', response.userId);
+            sessionStorage.setItem('userEmail', response.userEmail);
+            router.push('/auth/mfa-choice');
+            return;
+        }
+
+        // ✅ Success - No MFA, redirect to /login (magic link page)
+        toast.success('Password verified!', {
+            description: 'Complete verification with magic link',
+            duration: 2000,
+            position: 'top-center',
+        });
+
+        localStorage.setItem('lastLoginEmail', formData.email);
+        
+        setTimeout(() => {
+            router.push('/login?verified=true'); // ✅ Magic link page
+        }, 1000);
+
+    } catch (error) {
+        console.error('Login error:', error);
+        setIsLoading(false);
+        toast.error('Connection error', {
+            description: 'Please check your internet connection',
+            duration: 4000,
+            position: 'top-center',
+        });
+    }
+};
 
     return (
         <form onSubmit={handleSubmit} className="space-y-5">

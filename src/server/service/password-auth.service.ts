@@ -41,6 +41,8 @@ export const PasswordAuthService = {
             }
 
             const passwordHash = await passwordUtils.hash(data.password);
+
+            // ✅ CHANGED: Generate token but DON'T send email yet
             const verificationToken = generateId(40);
             const verificationTokenExpiresAt = createDate(new TimeSpan(24, 'h'));
 
@@ -52,6 +54,7 @@ export const PasswordAuthService = {
                     verificationToken,
                     verificationTokenExpiresAt,
                     isVerified: false,
+                    // Don't set encryptionKey yet - will be set in encryption setup
                 })
                 .returning();
 
@@ -70,22 +73,24 @@ export const PasswordAuthService = {
                 .set({ userId: user.id })
                 .where(eq(authUsers.id, authUser.id));
 
-            const verificationLink = `${env.SITE_URL}/auth/verify-email?token=${verificationToken}`;
-            const html = await render(AuthenticationEmail(verificationLink));
+            // ❌ REMOVED: Don't send verification email during signup
+            // const verificationLink = `${env.SITE_URL}/auth/verify-email?token=${verificationToken}`;
+            // const html = await render(AuthenticationEmail(verificationLink));
+            // await sendEmail({...});
 
-            await sendEmail({
-                to: data.email,
-                subject: 'Verify your email address',
-                html,
-            });
+            console.log('✅ User created successfully (email will be sent at login)');
 
-            return { ok: true, userId: user.id };
+            // Return both userId and authUserId for encryption setup
+            return {
+                ok: true,
+                userId: user.id,
+                authUserId: authUser.id,
+            };
         } catch (error) {
             console.error('Signup error:', error);
             return { ok: false, error: 'Failed to create account' };
         }
     },
-
     verifyEmail: async (token: string) => {
         try {
             const authUser = await db.query.authUsers.findFirst({
@@ -165,7 +170,19 @@ export const PasswordAuthService = {
                 };
             }
 
-            // Step 3: Check if MFA enabled (optional)
+            // Step 3: Check if encryption is set up
+            if (!authUser.encryptionKey) {
+                return {
+                    ok: true,
+                    needsEncryptionSetup: true,
+                    authUserId: authUser.id,
+                    userId: authUser.userId,
+                    userEmail: authUser.email,
+                    message: 'Please complete encryption setup'
+                };
+            }
+
+            // Step 4: Check if MFA enabled
             if (authUser.mfaEnabled) {
                 const mfaToken = generateId(40);
                 return {
@@ -177,12 +194,86 @@ export const PasswordAuthService = {
                 };
             }
 
-            // Success! Just return ok
+            // ✅ NEW: Step 5: Check if email is verified
+            if (!authUser.isVerified) {
+                console.log('📧 User not verified, sending magic link email...');
+
+                // Generate new token if needed (in case old one expired)
+                let token = authUser.verificationToken;
+                if (!token || (authUser.verificationTokenExpiresAt && new Date() > authUser.verificationTokenExpiresAt)) {
+                    console.log('🔄 Generating new verification token...');
+                    token = generateId(40);
+                    const expiresAt = createDate(new TimeSpan(24, 'h'));
+
+                    await db
+                        .update(authUsers)
+                        .set({
+                            verificationToken: token,
+                            verificationTokenExpiresAt: expiresAt,
+                        })
+                        .where(eq(authUsers.id, authUser.id));
+                }
+
+                // ✅ NEW: Send magic link email HERE (during login)
+                const verificationLink = `${env.SITE_URL}/auth/verify-email?token=${token}`;
+                const html = await render(AuthenticationEmail(verificationLink));
+
+                try {
+                    await sendEmail({
+                        to: authUser.email,
+                        subject: 'Verify your email and login',
+                        html,
+                    });
+                    console.log('✅ Magic link sent to:', authUser.email);
+                } catch (emailError) {
+                    console.error('❌ Failed to send email:', emailError);
+                    return {
+                        ok: false,
+                        error: 'Failed to send verification email',
+                        errorType: 'email_error',
+                        message: 'Could not send verification email. Please try again.'
+                    };
+                }
+
+                return {
+                    ok: true,
+                    needsEmailVerification: true, // ✅ NEW FLAG
+                    userEmail: authUser.email,
+                    message: 'Check your email for login link'
+                };
+            }
+
+            // ✅ Step 6: If verified, create session and login
+            if (authUser.userId) {
+                const user = await db.query.users.findFirst({
+                    where: eq(users.id, authUser.userId),
+                });
+
+                if (!user) {
+                    return { ok: false, error: 'User not found' };
+                }
+
+                const session = await lucia.createSession(user.id, {});
+                const sessionCookie = lucia.createSessionCookie(session.id);
+                cookies().set(
+                    sessionCookie.name,
+                    sessionCookie.value,
+                    sessionCookie.attributes
+                );
+
+                return {
+                    ok: true,
+                    userId: user.id,
+                    userEmail: authUser.email,
+                    message: 'Login successful',
+                    loggedIn: true, // ✅ NEW FLAG to indicate user is logged in
+                };
+            }
+
             return {
-                ok: true,
-                userId: authUser.userId,
-                userEmail: authUser.email,
-                message: 'Login successful'
+                ok: false,
+                error: 'Login failed',
+                errorType: 'server_error',
             };
 
         } catch (error) {
@@ -195,7 +286,8 @@ export const PasswordAuthService = {
             };
         }
     },
-    
+
+    // ... rest of the functions stay the same ...
     verifyMfaAndLogin: async (data: {
         mfaToken: string;
         code: string;

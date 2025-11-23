@@ -22,6 +22,20 @@
       "when": 1762654637050,
       "tag": "0002_lush_unicorn",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1763578767804,
+      "tag": "0003_empty_calypso",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1763586726131,
+      "tag": "0004_silly_eternity",
+      "breakpoints": true
     }
   ]
 }

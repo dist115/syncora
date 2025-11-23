@@ -20,6 +20,7 @@ import Image from '@/components/atoms/next/image';
 import DocPreview from '@/components/molecules/doc-preview/doc-preview';
 import SharedFileMetaInformation from '@/components/molecules/file/shared-file-meta';
 import { Logo } from '@/components/molecules/logo';
+import { getDecryptedFileLink } from '@/lib/utils/file';
 
 export function SharedFilePreview({
   file,
@@ -38,7 +39,8 @@ export function SharedFilePreview({
 }) {
   const { open, openDrawer, closeDrawer } = useDrawerState();
 
-  const fileUrl = getR2FileLink(file.fileName);
+  // const fileUrl = getR2FileLink(file.fileName);
+  const fileUrl = getDecryptedFileLink(file.id);
   const iconType = file?.type as FileIconType | null;
 
   return (
