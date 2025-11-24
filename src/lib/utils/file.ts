@@ -23,6 +23,21 @@ export function getS3FileLink(fileName: string) {
   }
   return imageUrl;
 }
+<<<<<<< HEAD
+
+
+export function getR2FileLink(fileName: string) {
+  // Use the public Cloudflare R2 URL
+  const baseUrl = process.env.NEXT_PUBLIC_CLOUDFLARE_URL || process.env.NEXT_PUBLIC_UPLOAD_URL;
+  
+  // Remove leading slash if present
+  const cleanFileName = fileName.startsWith('/') ? fileName.slice(1) : fileName;
+  
+  return `${baseUrl}/${cleanFileName}`;
+}
+
+
+=======
 export function getR2FileLink(fileName: string) {
   let fileUrl = fileName;
 
@@ -36,6 +51,7 @@ export function getR2FileLink(fileName: string) {
 
   return fileUrl;
 }
+>>>>>>> cafdcd0276b654aa9be83d16971b317ccdea35bf
 export async function uploadFilesAndGetPaths(
   files: File[],
   handleProgress: (

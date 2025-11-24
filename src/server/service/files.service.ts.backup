@@ -45,39 +45,6 @@ export enum FolderSizeUpdateType {
 
 export const FilesService = {
   uploadFile: async (data: NewFile[]) => {
-<<<<<<< HEAD
-  // Validate and ensure all required fields are present
-  const validatedData = data.map((file) => {
-    // Extract filename without extension for the name field
-    const fullFileName = file.fileName || file.name || 'Untitled';
-    const extension = fullFileName.includes('.') 
-      ? fullFileName.split('.').pop() 
-      : '';
-    const nameWithoutExtension = fullFileName.includes('.')
-      ? fullFileName.substring(0, fullFileName.lastIndexOf('.'))
-      : fullFileName;
-
-    return {
-      ...file,
-      name: file.name || nameWithoutExtension, // Use name or extract from fileName
-      fileName: file.fileName || fullFileName,
-      fileSize: file.fileSize || 0,
-      type: file.type || (file.mime ? file.mime.split('/')[0] : 'file'),
-      extension: file.extension || extension,
-      mime: file.mime || 'application/octet-stream',
-    };
-  });
-
-  // Update folder sizes
-  validatedData.forEach(async (fileData: NewFile) => {
-    const parent = fileData.parentId || '';
-    const size = fileData.fileSize || 0;
-    await FilesService.updateFolderSize(parent, size);
-  });
-
-  return await db.insert(filesModel).values(validatedData).returning();
-},
-=======
     data.forEach(async (data: NewFile) => {
       const parent = data.parentId || '';
       const size = data.fileSize || 0;
@@ -86,7 +53,6 @@ export const FilesService = {
 
     return await db.insert(filesModel).values(data).returning();
   },
->>>>>>> cafdcd0276b654aa9be83d16971b317ccdea35bf
 
   getFiles: async (
     params: {
