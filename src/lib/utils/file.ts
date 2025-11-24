@@ -23,6 +23,7 @@ export function getS3FileLink(fileName: string) {
   }
   return imageUrl;
 }
+<<<<<<< HEAD
 
 
 export function getR2FileLink(fileName: string) {
@@ -36,6 +37,21 @@ export function getR2FileLink(fileName: string) {
 }
 
 
+=======
+export function getR2FileLink(fileName: string) {
+  let fileUrl = fileName;
+
+  if (
+    fileName &&
+    fileName?.startsWith('http') === false &&
+    env.NEXT_PUBLIC_CLOUDFLARE_URL
+  ) {
+    fileUrl = `${env.NEXT_PUBLIC_CLOUDFLARE_URL}/${fileName}`;
+  }
+
+  return fileUrl;
+}
+>>>>>>> cafdcd0276b654aa9be83d16971b317ccdea35bf
 export async function uploadFilesAndGetPaths(
   files: File[],
   handleProgress: (

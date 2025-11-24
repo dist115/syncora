@@ -1,5 +1,6 @@
 services:
   postgres:
+<<<<<<< HEAD
     image: postgres:16
     container_name: syncora-postgres
     environment:
@@ -14,3 +15,20 @@ services:
 
 volumes:
   postgres_data:
+=======
+    container_name: syncora_postgres
+    image: postgres
+    restart: always
+    environment:
+      - DATABASE_HOST=127.0.0.1
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=syncora
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
+>>>>>>> cafdcd0276b654aa9be83d16971b317ccdea35bf

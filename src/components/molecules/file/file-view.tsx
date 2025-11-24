@@ -1,4 +1,7 @@
+<<<<<<< HEAD
 import { DownloadHandler } from './download-handler';
+=======
+>>>>>>> cafdcd0276b654aa9be83d16971b317ccdea35bf
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import Link from 'next/link';
 import { CompleteFile, Folder } from '@/db/schema';
@@ -227,6 +230,7 @@ export const FileView = ({
               />
               Share
             </Button>
+<<<<<<< HEAD
             <DownloadHandler
               file={file}
               fileUrl={imageUrl}
@@ -247,6 +251,21 @@ export const FileView = ({
                 </Button>
               )}
             </DownloadHandler>
+=======
+            <Button
+              className="font-normal hover:bg-steel-100/50 dark:hover:bg-steel-600/50 text-steel-700 dark:text-steel-300"
+              variant="text"
+            >
+              <Link className="flex items-center" href={imageUrl}>
+                <ArrowDownToLine
+                  className="mr-2 text-steel-500 dark:text-steel-400"
+                  strokeWidth={1.5}
+                  size={18}
+                />
+                Download
+              </Link>
+            </Button>
+>>>>>>> cafdcd0276b654aa9be83d16971b317ccdea35bf
           </Flex>
 
           <Flex className="w-auto gap-3" justify="start">
@@ -321,6 +340,7 @@ export const FileView = ({
                   {file.name}.{file.extension}
                 </Text>
               </Flex>
+<<<<<<< HEAD
 	      <Text className="mb-8">
                 Hmm… looks like this file doesn&apos;t have a preview we can
                 show you.
@@ -345,6 +365,22 @@ export const FileView = ({
                   </Button>
                 )}
               </DownloadHandler>
+=======
+              <Text className="mb-8">
+                Hmm… looks like this file doesn&apos;t have a preview we can
+                show you.
+              </Text>
+              <Button>
+                <Link className="flex items-center" href={imageUrl}>
+                  <ArrowDownToLine
+                    className="mr-2"
+                    strokeWidth={1.5}
+                    size={18}
+                  />
+                  Download
+                </Link>
+              </Button>
+>>>>>>> cafdcd0276b654aa9be83d16971b317ccdea35bf
             </Box>
           )}
 

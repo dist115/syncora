@@ -45,6 +45,7 @@ export enum FolderSizeUpdateType {
 
 export const FilesService = {
   uploadFile: async (data: NewFile[]) => {
+<<<<<<< HEAD
   // Validate and ensure all required fields are present
   const validatedData = data.map((file) => {
     // Extract filename without extension for the name field
@@ -76,6 +77,16 @@ export const FilesService = {
 
   return await db.insert(filesModel).values(validatedData).returning();
 },
+=======
+    data.forEach(async (data: NewFile) => {
+      const parent = data.parentId || '';
+      const size = data.fileSize || 0;
+      await FilesService.updateFolderSize(parent, size);
+    });
+
+    return await db.insert(filesModel).values(data).returning();
+  },
+>>>>>>> cafdcd0276b654aa9be83d16971b317ccdea35bf
 
   getFiles: async (
     params: {
