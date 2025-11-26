@@ -43,6 +43,8 @@ import Image from '@/components/atoms/next/image';
 import DocPreview from '@/components/molecules/doc-preview/doc-preview';
 import FileDetails from '@/components/organisms/file-details';
 import { getDecryptedFileLink } from '@/lib/utils/file';
+import { SecureImage, SecureVideo, SecureAudio } from '@/components/atoms/secure-media';
+
 
 export function FilePreview({
   file,
@@ -152,22 +154,20 @@ export function FilePreview({
             <Box className="relative w-full h-full bg-steel-50 dark:bg-steel-800">
               <ImagePreview file={file} fileUrl={fileUrl} />
             </Box>
-          ) : file.type === 'video' ? (
+          )    : file.type === 'video' ? (
             <Box className="flex items-center justify-center w-full h-full bg-steel-50 dark:bg-steel-800">
-              <video
-                controls
+              <SecureVideo
+                src={fileUrl}
                 className="w-auto h-auto max-w-full max-h-full m-auto"
-              >
-                <source src={fileUrl} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+                type="video/mp4"
+              />
             </Box>
           ) : file.type === 'audio' ? (
             <Box className="flex items-center justify-center w-full h-full dark:bg-steel-800">
-              <audio controls className="w-[420px] max-w-full">
-                <source src={fileUrl} />
-                Your browser does not support the audio tag.
-              </audio>
+              <SecureAudio
+                src={fileUrl}
+                className="w-[420px] max-w-full"
+              />
             </Box>
           ) : file.type === 'pdf' ||
             file.type === 'xlsx' ||
@@ -294,15 +294,14 @@ function ImagePreview({
           />
         </Flex>
       )}
-      <Image
+      <SecureImage
         src={fileUrl ?? ''}
         alt={file.name}
         className={cn(
-          'object-contain opacity-0 !w-auto !h-auto m-auto max-w-full max-h-full',
+          'object-contain opacity-0 w-auto h-auto m-auto max-w-full max-h-full',
           loaded && 'opacity-100'
         )}
-        fill
-        onLoadingComplete={() => setLoaded(true)}
+        onLoad={() => setLoaded(true)}
       />
     </>
   );
