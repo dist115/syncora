@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-import { DownloadHandler } from './download-handler';
-=======
->>>>>>> cafdcd0276b654aa9be83d16971b317ccdea35bf
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import Link from 'next/link';
 import { CompleteFile, Folder } from '@/db/schema';
@@ -20,7 +16,7 @@ import prettyBytes from 'pretty-bytes';
 import { ActionIcon, Button, Modal, Text } from 'rizzui';
 
 import { cn } from '@/lib/utils/cn';
-// import { getR2FileLink } from '@/lib/utils/file';
+import { getR2FileLink } from '@/lib/utils/file';
 import { Draggable } from '@/components/atoms/draggable';
 import {
   DynamicFileIcon,
@@ -31,9 +27,6 @@ import { Box, Flex } from '@/components/atoms/layout';
 import Image from '@/components/atoms/next/image';
 import { FolderAction } from '@/components/molecules/folder-action';
 import FileDetails from '@/components/organisms/file-details';
-import { getDecryptedFileLink } from '@/lib/utils/file';
-import { SecureImage, SecureVideo, SecureAudio } from '@/components/atoms/secure-media';
-
 
 export const FileView = ({
   file,
@@ -58,9 +51,7 @@ export const FileView = ({
 
   const [modalState, setModalState] = useState(false);
   const [detailsState, setDetailsState] = useState(true);
-  // const imageUrl = getR2FileLink(file.fileName);
-  const imageUrl = getDecryptedFileLink(file.id);
-
+  const imageUrl = getR2FileLink(file.fileName);
 
   const parentFolder =
     folders.find((item) => item.id === file.parentId) ?? null;
@@ -235,28 +226,6 @@ export const FileView = ({
               />
               Share
             </Button>
-<<<<<<< HEAD
-            <DownloadHandler
-              file={file}
-              fileUrl={imageUrl}
-            >
-              {({ onClick, isLoading }) => (
-                <Button
-                  className="font-normal hover:bg-steel-100/50 dark:hover:bg-steel-600/50 text-steel-700 dark:text-steel-300"
-                  variant="text"
-                  onClick={onClick}
-                  disabled={isLoading}
-                >
-                  <ArrowDownToLine
-                    className="mr-2 text-steel-500 dark:text-steel-400"
-                    strokeWidth={1.5}
-                    size={18}
-                  />
-                  {isLoading ? 'Decrypting...' : 'Download'}
-                </Button>
-              )}
-            </DownloadHandler>
-=======
             <Button
               className="font-normal hover:bg-steel-100/50 dark:hover:bg-steel-600/50 text-steel-700 dark:text-steel-300"
               variant="text"
@@ -270,7 +239,6 @@ export const FileView = ({
                 Download
               </Link>
             </Button>
->>>>>>> cafdcd0276b654aa9be83d16971b317ccdea35bf
           </Flex>
 
           <Flex className="w-auto gap-3" justify="start">
@@ -310,28 +278,32 @@ export const FileView = ({
               : 'grid-cols-1'
           )}
         >
-           {file.type === 'image' && file.mime !== 'image/svg+xml' ? (
-            <Box className="relative w-full h-full bg-steel-50 dark:bg-steel-800 flex items-center justify-center">
-              <SecureImage
+          {file.type === 'image' && file.mime !== 'image/svg+xml' ? (
+            <Box className="relative w-full h-full bg-steel-50 dark:bg-steel-800">
+              <Image
                 src={imageUrl ?? ''}
                 alt={file.name}
-                className="object-contain w-auto h-auto m-auto max-w-full max-h-full"
+                className="object-contain !w-auto !h-auto m-auto max-w-full max-h-full"
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               />
             </Box>
           ) : file.type === 'video' ? (
             <Box className="flex items-center justify-center w-full h-full bg-steel-50 dark:bg-steel-800">
-              <SecureVideo
-                src={imageUrl}
+              <video
+                controls
                 className="w-auto h-auto max-w-full max-h-full m-auto"
-                type="video/mp4"
-              />
+              >
+                <source src={imageUrl} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
             </Box>
           ) : file.type === 'audio' ? (
             <Box className="flex items-center justify-center w-full h-full">
-              <SecureAudio
-                src={imageUrl}
-                className="w-[420px] max-w-full"
-              />
+              <audio controls className="w-[420px] max-w-full">
+                <source src={imageUrl} />
+                Your browser does not support the audio tag.
+              </audio>
             </Box>
           ) : (
             <Box className="flex flex-col items-center justify-center w-full h-full bg-steel-50 dark:bg-steel-800">
@@ -341,32 +313,6 @@ export const FileView = ({
                   {file.name}.{file.extension}
                 </Text>
               </Flex>
-<<<<<<< HEAD
-	      <Text className="mb-8">
-                Hmm… looks like this file doesn&apos;t have a preview we can
-                show you.
-              </Text>
-              
-              <DownloadHandler
-                file={file}
-                fileUrl={imageUrl}
-              >
-                {({ onClick, isLoading }) => (
-                  <Button
-                    onClick={onClick}
-                    disabled={isLoading}
-                    isLoading={isLoading}
-                  >
-                    <ArrowDownToLine
-                      className="mr-2"
-                      strokeWidth={1.5}
-                      size={18}
-                    />
-                    {isLoading ? 'Decrypting...' : 'Download'}
-                  </Button>
-                )}
-              </DownloadHandler>
-=======
               <Text className="mb-8">
                 Hmm… looks like this file doesn&apos;t have a preview we can
                 show you.
@@ -381,7 +327,6 @@ export const FileView = ({
                   Download
                 </Link>
               </Button>
->>>>>>> cafdcd0276b654aa9be83d16971b317ccdea35bf
             </Box>
           )}
 

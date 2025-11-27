@@ -1,5 +1,9 @@
 {
+<<<<<<< HEAD
   "id": "1f125339-53af-4d80-8c7d-0844e9b4f102",
+=======
+  "id": "ae44a332-ca14-4740-89a5-8b3bd638cb2e",
+>>>>>>> e257f1936ed451c16387ee5b07d4aeb3b80b10e8
   "prevId": "9488ffd3-c852-4f07-bf3d-bec3339f2dfe",
   "version": "7",
   "dialect": "postgresql",
@@ -183,6 +187,7 @@
           "primaryKey": false,
           "notNull": false
         },
+<<<<<<< HEAD
         "encryption_type": {
           "name": "encryption_type",
           "type": "varchar(50)",
@@ -196,6 +201,8 @@
           "primaryKey": false,
           "notNull": true
         },
+=======
+>>>>>>> e257f1936ed451c16387ee5b07d4aeb3b80b10e8
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -471,6 +478,41 @@
           "type": "timestamp",
           "primaryKey": false,
           "notNull": false
+<<<<<<< HEAD
+=======
+        },
+        "encrypted_key": {
+          "name": "encrypted_key",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "encryption_iv": {
+          "name": "encryption_iv",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "encryption_salt": {
+          "name": "encryption_salt",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_encrypted": {
+          "name": "is_encrypted",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "encryption_version": {
+          "name": "encryption_version",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'1.0'"
+>>>>>>> e257f1936ed451c16387ee5b07d4aeb3b80b10e8
         }
       },
       "indexes": {},
