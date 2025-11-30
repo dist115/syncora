@@ -4,6 +4,8 @@ import { geist, inter } from './font';
 
 import './globals.css';
 
+import { Toaster } from 'sonner';
+
 import { cn } from '@/lib/utils/cn';
 import NextProgress from '@/components/atoms/next-progress';
 
@@ -25,6 +27,7 @@ export default function RootLayout({
       >
         <NextProgress />
         {children}
+          <Toaster position="top-center" richColors />
       </body>
     </html>
   );

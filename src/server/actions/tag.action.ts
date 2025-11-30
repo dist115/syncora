@@ -17,7 +17,9 @@ export const createMultipleTags = async (inputs: CombinedTagInput[]) => {
     const user = await getCurrentUser();
     const allTags = await Promise.all(
       inputs.map(async (inp) => {
-        const { label } = applyValidation<TagInput>(CreateTagSchema, inp);
+        // const { label } = applyValidation<TagInput>(CreateTagSchema, inp);
+         const { label } = applyValidation(CreateTagSchema, inp) as TagInput;
+        
 
         const tag = await TagsService.create({
           label,
@@ -46,7 +48,8 @@ export const createMultipleTags = async (inputs: CombinedTagInput[]) => {
 export const createTag = async (input: TagInput) => {
   try {
     const user = await getCurrentUser();
-    const { label } = applyValidation<TagInput>(CreateTagSchema, input);
+    // const { label } = applyValidation<TagInput>(CreateTagSchema, input);
+      const { label } = applyValidation(CreateTagSchema, input) as TagInput;
     const tag = await TagsService.create({
       label,
       ownerId: user?.currentTeamId ? user?.currentTeamId : user?.id,

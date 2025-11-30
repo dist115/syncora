@@ -16,7 +16,7 @@ import prettyBytes from 'pretty-bytes';
 import { ActionIcon, Button, Modal, Text } from 'rizzui';
 
 import { cn } from '@/lib/utils/cn';
-import { getR2FileLink } from '@/lib/utils/file';
+// import { getR2FileLink } from '@/lib/utils/file';
 import { Draggable } from '@/components/atoms/draggable';
 import {
   DynamicFileIcon,
@@ -27,6 +27,9 @@ import { Box, Flex } from '@/components/atoms/layout';
 import Image from '@/components/atoms/next/image';
 import { FolderAction } from '@/components/molecules/folder-action';
 import FileDetails from '@/components/organisms/file-details';
+import { getDecryptedFileLink } from '@/lib/utils/file';
+import { SecureImage, SecureVideo, SecureAudio } from '@/components/atoms/secure-media';
+
 
 export const FileView = ({
   file,
@@ -51,7 +54,9 @@ export const FileView = ({
 
   const [modalState, setModalState] = useState(false);
   const [detailsState, setDetailsState] = useState(true);
-  const imageUrl = getR2FileLink(file.fileName);
+  // const imageUrl = getR2FileLink(file.fileName);
+  const imageUrl = getDecryptedFileLink(file.id);
+
 
   const parentFolder =
     folders.find((item) => item.id === file.parentId) ?? null;
@@ -279,31 +284,27 @@ export const FileView = ({
           )}
         >
           {file.type === 'image' && file.mime !== 'image/svg+xml' ? (
-            <Box className="relative w-full h-full bg-steel-50 dark:bg-steel-800">
-              <Image
+            <Box className="relative w-full h-full bg-steel-50 dark:bg-steel-800 flex items-center justify-center">
+              <SecureImage
                 src={imageUrl ?? ''}
                 alt={file.name}
-                className="object-contain !w-auto !h-auto m-auto max-w-full max-h-full"
-                fill
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className="object-contain w-auto h-auto m-auto max-w-full max-h-full"
               />
             </Box>
           ) : file.type === 'video' ? (
             <Box className="flex items-center justify-center w-full h-full bg-steel-50 dark:bg-steel-800">
-              <video
-                controls
+              <SecureVideo
+                src={imageUrl}
                 className="w-auto h-auto max-w-full max-h-full m-auto"
-              >
-                <source src={imageUrl} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
+                type="video/mp4"
+              />
             </Box>
           ) : file.type === 'audio' ? (
             <Box className="flex items-center justify-center w-full h-full">
-              <audio controls className="w-[420px] max-w-full">
-                <source src={imageUrl} />
-                Your browser does not support the audio tag.
-              </audio>
+              <SecureAudio
+                src={imageUrl}
+                className="w-[420px] max-w-full"
+              />
             </Box>
           ) : (
             <Box className="flex flex-col items-center justify-center w-full h-full bg-steel-50 dark:bg-steel-800">

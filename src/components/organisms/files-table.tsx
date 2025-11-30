@@ -179,8 +179,8 @@ export const FilesTable = ({
           className="lg:w-52 xl:w-44"
           optionClassName="capitalize"
           options={fileType}
-          onChange={(value: string) => {
-            setQueryParams({ type: value, page: 1 });
+          onChange={(value) => {
+            setQueryParams({ type: String(value), page: 1 });
           }}
           getOptionValue={(option) => option?.value?.toLowerCase() as any}
           value={queryParams?.type ?? ''}
@@ -194,8 +194,8 @@ export const FilesTable = ({
           className="lg:w-52 xl:w-44"
           optionClassName="capitalize"
           options={teamDropdown}
-          onChange={(value: string) => {
-            setQueryParams({ team: value, page: 1 });
+          onChange={(value) => {
+            setQueryParams({ type: String(value), page: 1 });
           }}
           getOptionValue={(option) => option?.value?.toLowerCase() as any}
           value={queryParams?.team ?? ''}

@@ -1,0 +1,299 @@
+diff --git a/src/app/api/file/public/[hash]/route.ts b/src/app/api/file/public/[hash]/route.ts
+new file mode 100644
+index 0000000..04b0e32
+--- /dev/null
++++ b/src/app/api/file/public/[hash]/route.ts
+@@ -0,0 +1,117 @@
++import { NextRequest, NextResponse } from 'next/server';
++import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
++import { env } from '@/env.mjs';
++import { db } from '@/db';
++import { authUsers, files } from '@/db/schema';
++import { eq } from 'drizzle-orm';
++import { decryptWithMasterKey, decryptFile } from '@/lib/utils/encryption';
++
++/**
++ * Public file access endpoint for shared files
++ * No authentication required - validates file is public via hash
++ */
++export async function GET(
++  request: NextRequest,
++  { params }: { params: { hash: string } }
++) {
++  const { hash } = params;
++
++  try {
++    console.log('🌐 Public file access requested for hash:', hash);
++
++    // Step 1: Find file by hash and verify it's public
++    const file = await db.query.files.findFirst({
++      where: eq(files.hash, hash),
++    });
++
++    if (!file) {
++      console.error('❌ File not found for hash:', hash);
++      return NextResponse.json({ error: 'File not found' }, { status: 404 });
++    }
++
++    // Step 2: Verify file is public (shared)
++    if (!file.isPublic) {
++      console.error('❌ File is not public:', file.id);
++      return NextResponse.json({ error: 'File is not shared publicly' }, { status: 403 });
++    }
++
++    console.log('✅ Public file found:', file.name);
++
++    // Step 3: Get file owner's encryption key
++    const authUser = await db.query.authUsers.findFirst({
++      where: eq(authUsers.userId, file.userId),
++    });
++
++    if (!authUser || !authUser.encryptionKey) {
++      console.error('❌ No encryption key for file owner');
++      return NextResponse.json({ error: 'File encryption key not found' }, { status: 500 });
++    }
++
++    console.log('✅ Owner encryption key found');
++
++    // Step 4: Decrypt owner's key using master key
++    const userEncryptionKey = decryptWithMasterKey(authUser.encryptionKey);
++    console.log('✅ Owner key decrypted');
++
++    // Step 5: Download encrypted file from R2
++    console.log('📥 Downloading from R2:', file.fileName);
++    
++    const s3Client = new S3Client({
++      region: 'auto',
++      endpoint: env.CLOUDFLARE_ENDPOINT as string,
++      credentials: {
++        accessKeyId: env.CLOUDFLARE_ACCESS_KEY_ID as string,
++        secretAccessKey: env.CLOUDFLARE_SECRET_ACCESS_KEY as string,
++      },
++      forcePathStyle: true,
++    });
++
++    const command = new GetObjectCommand({
++      Bucket: env.R2_BUCKET_NAME as string,
++      Key: file.fileName,
++    });
++
++    const response = await s3Client.send(command);
++
++    if (!response.Body) {
++      console.error('❌ No file body from R2');
++      return NextResponse.json({ error: 'File not found in storage' }, { status: 404 });
++    }
++
++    console.log('✅ File downloaded from R2');
++
++    // Step 6: Decrypt file
++    console.log('🔓 Decrypting...');
++    
++    const encryptedBuffer = Buffer.from(
++      await response.Body.transformToByteArray()
++    );
++
++    const decryptedBuffer = decryptFile(encryptedBuffer, userEncryptionKey);
++    
++    console.log('✅ File decrypted for public access, size:', decryptedBuffer.length, 'bytes');
++
++    // Step 7: Return decrypted file
++    return new NextResponse(decryptedBuffer, {
++      status: 200,
++      headers: {
++        'Content-Type': file.mime || 'application/octet-stream',
++        'Content-Disposition': `inline; filename="${encodeURIComponent(file.name)}.${file.extension}"`,
++        'Content-Length': decryptedBuffer.length.toString(),
++        'Cache-Control': 'public, max-age=3600', // Public files can be cached
++        'Access-Control-Allow-Origin': '*', // Allow from any origin for shared files
++        'Access-Control-Allow-Methods': 'GET',
++      },
++    });
++
++  } catch (error) {
++    console.error('❌ Public file access error:', error);
++    return NextResponse.json(
++      { 
++        error: 'Failed to access file', 
++        details: error instanceof Error ? error.message : 'Unknown error' 
++      },
++      { status: 500 }
++    );
++  }
++}
+\ No newline at end of file
+diff --git a/src/app/globals.css b/src/app/globals.css
+index 0ff4e1a..a0d2e38 100644
+--- a/src/app/globals.css
++++ b/src/app/globals.css
+@@ -596,3 +596,9 @@ input:-webkit-autofill:active {
+ .rizzui-select-options {
+   @apply dark:!bg-steel-700;
+ }
++
++
++/* hide extra page text at footer */
++.react-pdf__Page__textContent {
++  display: none;
++}
+\ No newline at end of file
+diff --git a/src/components/molecules/doc-preview.tsx b/src/components/molecules/doc-preview.tsx
+index 5bafde9..1cac239 100644
+--- a/src/components/molecules/doc-preview.tsx
++++ b/src/components/molecules/doc-preview.tsx
+@@ -14,7 +14,7 @@ const DocPreview = ({ docUrl, docType }: { docUrl: string, docType: string }) =>
+                 pluginRenderers={DocViewerRenderers}
+                 config={{
+                     header: { disableHeader: true },
+-                    pdfVerticalScrollByDefault:true,
++                    pdfVerticalScrollByDefault:false,
+                     pdfZoom: {
+                         defaultZoom: .8, 
+                         zoomJump: 0.2,
+diff --git a/src/components/molecules/doc-preview/doc-preview.tsx b/src/components/molecules/doc-preview/doc-preview.tsx
+index 46b259d..94b1958 100644
+--- a/src/components/molecules/doc-preview/doc-preview.tsx
++++ b/src/components/molecules/doc-preview/doc-preview.tsx
+@@ -7,8 +7,6 @@ import { Box, Flex } from '@/components/atoms/layout';
+ import { SecureDocument } from '@/components/atoms/secure-media';
+ import { Text } from 'rizzui';
+ 
+-import { docHeader } from './doc-header';
+-
+ /**
+  * DocPreview Component
+  * ✅ FIXED: Now fetches encrypted documents with credentials first
+@@ -65,15 +63,23 @@ const DocPreview = ({
+             activeDocument={docs[0]}
+             pluginRenderers={DocViewerRenderers}
+             config={{
+-              header: { overrideComponent: docHeader },
++              header: {
++                disableHeader: true,        // ✅ Disable header
++                disableFileName: true,      // ✅ Disable filename display
++              },
+               pdfVerticalScrollByDefault: true,
+               pdfZoom: {
+-                defaultZoom: 0.8,
++                defaultZoom: 0.6,
+                 zoomJump: 0.2,
+               },
+             }}
+-            style={{ width: '100%', height: screenHeight - 56 }}
+-            theme={{ disableThemeScrollbar: true }}
++            style={{
++              width: '100%',               // ✅ Full width
++              height: screenHeight - 56,   // ✅ Full height minus header
++            }}
++            theme={{
++              disableThemeScrollbar: false, // ✅ Enable scrollbar
++            }}
+           />
+         );
+       }}
+diff --git a/src/components/templates/shared-file-preview.tsx b/src/components/templates/shared-file-preview.tsx
+index 66cfa63..50dc249 100644
+--- a/src/components/templates/shared-file-preview.tsx
++++ b/src/components/templates/shared-file-preview.tsx
+@@ -20,8 +20,8 @@ import Image from '@/components/atoms/next/image';
+ import DocPreview from '@/components/molecules/doc-preview/doc-preview';
+ import SharedFileMetaInformation from '@/components/molecules/file/shared-file-meta';
+ import { Logo } from '@/components/molecules/logo';
+-import { getDecryptedFileLink } from '@/lib/utils/file';
+ import { SecureImage, SecureVideo, SecureAudio } from '@/components/atoms/secure-media';
++import { getDecryptedFileLink, getPublicDecryptedFileLink } from '@/lib/utils/file';
+ 
+ 
+ export function SharedFilePreview({
+@@ -42,7 +42,8 @@ export function SharedFilePreview({
+   const { open, openDrawer, closeDrawer } = useDrawerState();
+ 
+   // const fileUrl = getR2FileLink(file.fileName);
+-  const fileUrl = getDecryptedFileLink(file.id);
++  // ✅ Use public endpoint for shared files (requires hash, not ID)
++  const fileUrl = file.hash ? getPublicDecryptedFileLink(file.hash) : getDecryptedFileLink(file.id);
+   const iconType = file?.type as FileIconType | null;
+ 
+   return (
+@@ -89,21 +90,21 @@ export function SharedFilePreview({
+           <Box className="relative w-full h-full bg-steel-50 dark:bg-steel-800">
+             <ImagePreview file={file} fileUrl={fileUrl} />
+           </Box>
+-         ) : file.type === 'video' ? (
+-            <Box className="flex items-center justify-center w-full h-full bg-steel-50 dark:bg-steel-800">
+-              <SecureVideo
+-                src={fileUrl}
+-                className="w-auto h-auto max-w-full max-h-full m-auto"
+-                type="video/mp4"
+-              />
+-            </Box>
+-          ) : file.type === 'audio' ? (
+-            <Box className="flex items-center justify-center w-full h-full">
+-              <SecureAudio
+-                src={fileUrl}
+-                className="w-[420px] max-w-full"
+-              />
+-            </Box>
++        ) : file.type === 'video' ? (
++          <Box className="flex items-center justify-center w-full h-full bg-steel-50 dark:bg-steel-800">
++            <SecureVideo
++              src={fileUrl}
++              className="w-auto h-auto max-w-full max-h-full m-auto"
++              type="video/mp4"
++            />
++          </Box>
++        ) : file.type === 'audio' ? (
++          <Box className="flex items-center justify-center w-full h-full">
++            <SecureAudio
++              src={fileUrl}
++              className="w-[420px] max-w-full"
++            />
++          </Box>
+         ) : file.type === 'pdf' ||
+           file.type === 'xlsx' ||
+           file.type === 'doc' ||
+diff --git a/src/config/file.ts b/src/config/file.ts
+index 91bed16..a49448d 100644
+--- a/src/config/file.ts
++++ b/src/config/file.ts
+@@ -2,7 +2,7 @@ export const KB = 1000;
+ export const MB = KB * 1000;
+ export const GB = MB * 1000;
+ 
+-export const MAX_IMAGE_SIZE = 5 * MB;
++export const MAX_IMAGE_SIZE = 50 * MB;
+ 
+ export const MAX_FILE_SIZE = 4 * GB;
+ 
+diff --git a/src/lib/utils/file.ts b/src/lib/utils/file.ts
+index 2ff8467..6598e38 100644
+--- a/src/lib/utils/file.ts
++++ b/src/lib/utils/file.ts
+@@ -60,6 +60,19 @@ export function getDecryptedFileLink(fileId: string): string {
+   return `/api/file/${fileId}`;
+ }
+ 
++/**
++ * ✅ Get public decrypted file link for shared files
++ * 
++ * Returns a link to the public decryption API endpoint that doesn't require auth.
++ * Used for files that are shared publicly via hash.
++ * 
++ * @param fileHash - The public file hash
++ * @returns URL to public decryption endpoint
++ */
++export function getPublicDecryptedFileLink(fileHash: string): string {
++  return `/api/file/public/${fileHash}`;
++}
++
+ export async function uploadFilesAndGetPaths(
+   files: File[],
+   handleProgress: (
+@@ -116,4 +129,5 @@ export function formatFoldersData(folders: any[], files: any[]) {
+     formattedData.push(data);
+   });
+   return formattedData;
+-}
+\ No newline at end of file
++}
++

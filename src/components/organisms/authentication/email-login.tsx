@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { demoLogin, magicLogin } from '@/server/actions/auth.action';
+import { magicLogin } from '@/server/actions/auth.action';
+// import { demoLogin, magicLogin } from '@/server/actions/auth.action';
 import { Button, Input, Text } from 'rizzui';
 import { toast } from 'sonner';
 
@@ -11,11 +12,28 @@ import { GoogleIcon } from '@/components/atoms/icons/google';
 import { Box, Flex } from '@/components/atoms/layout';
 import { useSearchParams } from '@/components/atoms/next/navigation';
 
-const demoMail = 'demo@filekit.com';
+// const demoMail = 'diwanmagar925@gmail.com';
 
 export const EmailLogin = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState(''); // CHANGE: Remove demoMail default
   const searchParams = useSearchParams();
+
+  // ADD THIS useEffect - Autofill email from localStorage
+  useEffect(() => {
+    const lastEmail = localStorage.getItem('lastLoginEmail');
+    if (lastEmail) {
+      setEmail(lastEmail);
+      // Show toast if coming from password login
+      if (searchParams?.get('verified') === 'true') {
+        toast.success('Password verified!', {
+          description: 'Click below to receive magic link',
+          duration: 3000,
+          position: 'top-center',
+        });
+      }
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (event: any) => {
     event.preventDefault();
@@ -29,11 +47,11 @@ export const EmailLogin = () => {
       return;
     }
     //NOTE THIS IS ONLY FOR DEMO PURPOSE
-    
-    //const response = await magicLogin(email.value);
 
-    
-    const response = await demoLogin(email.value);
+    const response = await magicLogin(email.value);
+
+
+    // const response = await demoLogin(email.value);
 
     setIsLoading(false);
     if (!response.ok) {
@@ -48,8 +66,9 @@ export const EmailLogin = () => {
     <form method="post" onSubmit={handleSubmit} className="space-y-2">
       <Box>
         <Input
-          readOnly={true}
-          value={demoMail}
+          // readOnly={true}
+          value={email}
+          onChange={(e) => setEmail(e.target.value)} // ADD onChange
           autoComplete="off"
           name="email"
           type="email"

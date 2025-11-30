@@ -20,6 +20,8 @@ import Image from '@/components/atoms/next/image';
 import DocPreview from '@/components/molecules/doc-preview/doc-preview';
 import SharedFileMetaInformation from '@/components/molecules/file/shared-file-meta';
 import { Logo } from '@/components/molecules/logo';
+import { getDecryptedFileLink, getPublicDecryptedFileLink } from '@/lib/utils/file';
+import { SecureImage, SecureVideo, SecureAudio } from '@/components/atoms/secure-media';
 
 export function SharedFilePreview({
   file,
@@ -38,7 +40,8 @@ export function SharedFilePreview({
 }) {
   const { open, openDrawer, closeDrawer } = useDrawerState();
 
-  const fileUrl = getR2FileLink(file.fileName);
+  // ✅ Use public endpoint for shared files
+  const fileUrl = file.hash ? getPublicDecryptedFileLink(file.hash) : getDecryptedFileLink(file.id);
   const iconType = file?.type as FileIconType | null;
 
   return (
@@ -82,25 +85,27 @@ export function SharedFilePreview({
 
       <Box className="h-[calc(100%-56px)] w-full grid grid-cols-1]">
         {file.type === 'image' && file.mime !== 'image/svg+xml' ? (
-          <Box className="relative w-full h-full bg-steel-50 dark:bg-steel-800">
-            <ImagePreview file={file} fileUrl={fileUrl} />
+          <Box className="relative w-full h-full bg-steel-50 dark:bg-steel-800 flex items-center justify-center p-4">
+            <Box className="w-full h-[calc(100%-2rem)]">
+              <ImagePreview file={file} fileUrl={fileUrl} />
+            </Box>
           </Box>
         ) : file.type === 'video' ? (
-          <Box className="flex items-center justify-center w-full h-full bg-steel-50 dark:bg-steel-800">
-            <video
-              controls
-              className="w-auto h-auto max-w-full max-h-full m-auto"
-            >
-              <source src={fileUrl} type="video/mp4" />
-              Your browser does not support the video tag.
-            </video>
+          <Box className="flex items-center justify-center w-full h-full bg-steel-50 dark:bg-steel-800 p-4">
+            <Box className="w-full h-[calc(100%-2rem)]">
+              <SecureVideo
+                src={fileUrl}
+                className="w-full h-full max-w-full max-h-full object-contain"
+                type="video/mp4"
+              />
+            </Box>
           </Box>
         ) : file.type === 'audio' ? (
           <Box className="flex items-center justify-center w-full h-full">
-            <audio controls className="w-[420px] max-w-full">
-              <source src={fileUrl} />
-              Your browser does not support the audio tag.
-            </audio>
+            <SecureAudio
+              src={fileUrl}
+              className="w-[420px] max-w-full"
+            />
           </Box>
         ) : file.type === 'pdf' ||
           file.type === 'xlsx' ||
@@ -150,6 +155,7 @@ export function SharedFilePreview({
   );
 }
 
+
 function ImagePreview({
   file,
   fileUrl,
@@ -159,7 +165,7 @@ function ImagePreview({
 }) {
   const [loaded, setLoaded] = useState(false);
   return (
-    <>
+    <Box className="relative w-full h-full flex items-center justify-center">
       {!loaded && (
         <Flex justify="center" className="absolute top-0 left-0 w-full h-full">
           <Text
@@ -168,17 +174,15 @@ function ImagePreview({
           />
         </Flex>
       )}
-      <Image
+      <SecureImage
         src={fileUrl ?? ''}
         alt={file.name}
         className={cn(
-          'object-contain opacity-0 !w-auto !h-auto m-auto max-w-full max-h-full',
+          'max-w-full max-h-full object-contain opacity-0 transition-opacity',
           loaded && 'opacity-100'
         )}
-        fill
-        onLoadingComplete={() => setLoaded(true)}
-        // sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        onLoad={() => setLoaded(true)}
       />
-    </>
+    </Box>
   );
 }

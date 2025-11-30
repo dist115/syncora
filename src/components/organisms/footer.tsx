@@ -63,7 +63,7 @@ export default function Footer({
                 : 'lg:py-8 text-[#E5E7EB]/80 border-[#434A54] lg:text-base'
             )}
           >
-            <Text className="py-0.5">
+            {/* <Text className="py-0.5">
               &copy; {new Date().getFullYear()}{' '}
               <Link
                 href="https://redq.io"
@@ -77,7 +77,7 @@ export default function Footer({
                 REDQ
               </Link>
               . All rights reserved.
-            </Text>
+            </Text> */}
             <Flex
               justify="between"
               align="start"

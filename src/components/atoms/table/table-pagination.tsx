@@ -35,7 +35,9 @@ export default function TablePagination({
         </span>
         <Select
           options={paginationLimitOptions as any}
-          onChange={setPageSize}
+          onChange={(value) => {
+            if (setPageSize) setPageSize(Number(value));
+          }}
           size="sm"
           variant="flat"
           value={pageSize}

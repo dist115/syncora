@@ -23,6 +23,11 @@ export function getS3FileLink(fileName: string) {
   }
   return imageUrl;
 }
+
+/**
+ * ⚠️ DEPRECATED: This function returns direct R2 links (encrypted files)
+ * Use getDecryptedFileLink() instead for encrypted files
+ */
 export function getR2FileLink(fileName: string) {
   let fileUrl = fileName;
 
@@ -36,6 +41,29 @@ export function getR2FileLink(fileName: string) {
 
   return fileUrl;
 }
+
+/**
+ * ✅ NEW: Get decrypted file link
+ * 
+ * Returns a link to the decryption API endpoint instead of direct R2 link.
+ * This ensures files are decrypted server-side before being served to users.
+ * 
+ * @param fileId - The file ID from database
+ * @returns URL to decryption endpoint (e.g., /api/file/abc123)
+ * 
+ * Example:
+ * const url = getDecryptedFileLink(file.id);
+ * // Returns: "/api/file/clx123abc456"
+ */
+export function getDecryptedFileLink(fileId: string): string {
+  // This points to our decryption API endpoint
+  return `/api/file/${fileId}`;
+}
+
+export function getPublicDecryptedFileLink(fileHash: string): string {
+  return `/api/file/public/${fileHash}`;
+}
+
 export async function uploadFilesAndGetPaths(
   files: File[],
   handleProgress: (
