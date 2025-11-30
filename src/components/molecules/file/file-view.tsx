@@ -1,7 +1,3 @@
-<<<<<<< HEAD
-import { DownloadHandler } from './download-handler';
-=======
->>>>>>> cafdcd0276b654aa9be83d16971b317ccdea35bf
 import { ChangeEvent, Dispatch, SetStateAction, useState } from 'react';
 import Link from 'next/link';
 import { CompleteFile, Folder } from '@/db/schema';
@@ -235,28 +231,6 @@ export const FileView = ({
               />
               Share
             </Button>
-<<<<<<< HEAD
-            <DownloadHandler
-              file={file}
-              fileUrl={imageUrl}
-            >
-              {({ onClick, isLoading }) => (
-                <Button
-                  className="font-normal hover:bg-steel-100/50 dark:hover:bg-steel-600/50 text-steel-700 dark:text-steel-300"
-                  variant="text"
-                  onClick={onClick}
-                  disabled={isLoading}
-                >
-                  <ArrowDownToLine
-                    className="mr-2 text-steel-500 dark:text-steel-400"
-                    strokeWidth={1.5}
-                    size={18}
-                  />
-                  {isLoading ? 'Decrypting...' : 'Download'}
-                </Button>
-              )}
-            </DownloadHandler>
-=======
             <Button
               className="font-normal hover:bg-steel-100/50 dark:hover:bg-steel-600/50 text-steel-700 dark:text-steel-300"
               variant="text"
@@ -270,7 +244,6 @@ export const FileView = ({
                 Download
               </Link>
             </Button>
->>>>>>> cafdcd0276b654aa9be83d16971b317ccdea35bf
           </Flex>
 
           <Flex className="w-auto gap-3" justify="start">
@@ -310,7 +283,7 @@ export const FileView = ({
               : 'grid-cols-1'
           )}
         >
-           {file.type === 'image' && file.mime !== 'image/svg+xml' ? (
+          {file.type === 'image' && file.mime !== 'image/svg+xml' ? (
             <Box className="relative w-full h-full bg-steel-50 dark:bg-steel-800 flex items-center justify-center">
               <SecureImage
                 src={imageUrl ?? ''}
@@ -341,32 +314,6 @@ export const FileView = ({
                   {file.name}.{file.extension}
                 </Text>
               </Flex>
-<<<<<<< HEAD
-	      <Text className="mb-8">
-                Hmm… looks like this file doesn&apos;t have a preview we can
-                show you.
-              </Text>
-              
-              <DownloadHandler
-                file={file}
-                fileUrl={imageUrl}
-              >
-                {({ onClick, isLoading }) => (
-                  <Button
-                    onClick={onClick}
-                    disabled={isLoading}
-                    isLoading={isLoading}
-                  >
-                    <ArrowDownToLine
-                      className="mr-2"
-                      strokeWidth={1.5}
-                      size={18}
-                    />
-                    {isLoading ? 'Decrypting...' : 'Download'}
-                  </Button>
-                )}
-              </DownloadHandler>
-=======
               <Text className="mb-8">
                 Hmm… looks like this file doesn&apos;t have a preview we can
                 show you.
@@ -381,7 +328,6 @@ export const FileView = ({
                   Download
                 </Link>
               </Button>
->>>>>>> cafdcd0276b654aa9be83d16971b317ccdea35bf
             </Box>
           )}
 

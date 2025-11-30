@@ -2,10 +2,6 @@ import { createId } from '@paralleldrive/cuid2';
 import { relations } from 'drizzle-orm';
 import {
   boolean,
-<<<<<<< HEAD
-  text,
-=======
->>>>>>> cafdcd0276b654aa9be83d16971b317ccdea35bf
   integer,
   pgTable,
   timestamp,
@@ -58,17 +54,6 @@ export const files = pgTable('files', {
   createdAt: timestamp('created_at', { mode: 'date' }).defaultNow().notNull(),
   updatedAt: timestamp('updated_at', { mode: 'date' }).defaultNow().notNull(),
   deletedAt: timestamp('deleted_at', { mode: 'date' }),
-<<<<<<< HEAD
-
-  // Add these fields to your files table schema
-  encryptedKey: text('encrypted_key'), // Base64 encoded wrapped file key
-  encryptionIv: text('encryption_iv'), // Base64 encoded IV
-  encryptionSalt: text('encryption_salt'), // Base64 encoded salt
-  isEncrypted: boolean('is_encrypted').default(false), // Flag for encrypted files
-  encryptionVersion: text('encryption_version').default('1.0') // Version tracking
-
-=======
->>>>>>> cafdcd0276b654aa9be83d16971b317ccdea35bf
 });
 
 export const fileRelations = relations(files, ({ many, one }) => ({

@@ -46,6 +46,8 @@ import { getDecryptedFileLink } from '@/lib/utils/file';
 import { SecureImage, SecureVideo, SecureAudio } from '@/components/atoms/secure-media';
 
 
+
+
 export function FilePreview({
   file,
   user,
@@ -154,7 +156,7 @@ export function FilePreview({
             <Box className="relative w-full h-full bg-steel-50 dark:bg-steel-800">
               <ImagePreview file={file} fileUrl={fileUrl} />
             </Box>
-          )    : file.type === 'video' ? (
+           ) : file.type === 'video' ? (
             <Box className="flex items-center justify-center w-full h-full bg-steel-50 dark:bg-steel-800">
               <SecureVideo
                 src={fileUrl}

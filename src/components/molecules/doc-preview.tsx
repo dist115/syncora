@@ -17,7 +17,7 @@ const DocPreview = ({ docUrl, docType }: { docUrl: string, docType: string }) =>
                     pdfVerticalScrollByDefault:true,
                     pdfZoom: {
                         defaultZoom: .8, 
-                        zoomJump: 0.2,
+                        zoomJump: 0.1,
                       },
                 }}
                 style={{ width: 1000, height: 1000 * 1.41 }}

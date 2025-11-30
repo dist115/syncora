@@ -1,9 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Text } from 'rizzui';
 import { cn } from '@/lib/utils/cn';
-import { Flex } from '@/components/atoms/layout';
+import { Text } from 'rizzui';
+import { Flex } from './layout';
 
 /**
  * Fetches encrypted files with credentials before use

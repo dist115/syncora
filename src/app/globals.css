@@ -596,3 +596,8 @@ input:-webkit-autofill:active {
 .rizzui-select-options {
   @apply dark:!bg-steel-700;
 }
+
+
+.react-pdf__Page__textContent {
+  display: none;
+}

@@ -23,29 +23,11 @@ export function getS3FileLink(fileName: string) {
   }
   return imageUrl;
 }
-<<<<<<< HEAD
 
 /**
  * ⚠️ DEPRECATED: This function returns direct R2 links (encrypted files)
  * Use getDecryptedFileLink() instead for encrypted files
  */
-=======
-<<<<<<< HEAD
-
-
-export function getR2FileLink(fileName: string) {
-  // Use the public Cloudflare R2 URL
-  const baseUrl = process.env.NEXT_PUBLIC_CLOUDFLARE_URL || process.env.NEXT_PUBLIC_UPLOAD_URL;
-  
-  // Remove leading slash if present
-  const cleanFileName = fileName.startsWith('/') ? fileName.slice(1) : fileName;
-  
-  return `${baseUrl}/${cleanFileName}`;
-}
-
-
-=======
->>>>>>> e257f1936ed451c16387ee5b07d4aeb3b80b10e8
 export function getR2FileLink(fileName: string) {
   let fileUrl = fileName;
 
@@ -59,7 +41,6 @@ export function getR2FileLink(fileName: string) {
 
   return fileUrl;
 }
-<<<<<<< HEAD
 
 /**
  * ✅ NEW: Get decrypted file link
@@ -79,9 +60,10 @@ export function getDecryptedFileLink(fileId: string): string {
   return `/api/file/${fileId}`;
 }
 
-=======
->>>>>>> cafdcd0276b654aa9be83d16971b317ccdea35bf
->>>>>>> e257f1936ed451c16387ee5b07d4aeb3b80b10e8
+export function getPublicDecryptedFileLink(fileHash: string): string {
+  return `/api/file/public/${fileHash}`;
+}
+
 export async function uploadFilesAndGetPaths(
   files: File[],
   handleProgress: (
